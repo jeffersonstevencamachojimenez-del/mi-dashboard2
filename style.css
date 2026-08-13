@@ -1,3 +1,7 @@
+/* =====================================================
+   ESTILO GENERAL
+===================================================== */
+
 * {
   box-sizing: border-box;
 }
@@ -5,27 +9,48 @@
 :root {
   --rojo: #b11226;
   --rojo-oscuro: #8f0e1e;
-  --fondo: #f4f6f9;
+  --rojo-claro: #fbeaec;
+
+  --fondo: #f3f5f8;
   --blanco: #ffffff;
+
   --texto: #263238;
-  --gris: #6b7280;
-  --borde: #e5e7eb;
-  --verde: #16803c;
+  --texto-secundario: #64748b;
+
+  --borde: #e2e8f0;
+
+  --verde: #15803d;
+  --verde-fondo: #e8f7ee;
+
   --amarillo: #c27a00;
+  --amarillo-fondo: #fff5d9;
+
   --rojo-alerta: #c62828;
+  --rojo-fondo: #fde8e8;
+
   --azul: #2563eb;
+
+  --sombra: 0 2px 8px rgba(15, 23, 42, 0.07);
+  --sombra-hover: 0 6px 18px rgba(15, 23, 42, 0.11);
 }
 
 body {
   margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
   background: var(--fondo);
+
   color: var(--texto);
 }
 
-/* =====================================
+
+/* =====================================================
    ENCABEZADO
-===================================== */
+===================================================== */
 
 .encabezado {
   background: linear-gradient(
@@ -46,7 +71,8 @@ body {
 
   gap: 20px;
 
-  box-shadow: 0 3px 12px rgba(0,0,0,.15);
+  box-shadow:
+    0 3px 12px rgba(0, 0, 0, 0.15);
 }
 
 .encabezado h1 {
@@ -55,20 +81,22 @@ body {
   font-size: 28px;
 
   font-weight: 700;
+
+  letter-spacing: -0.3px;
 }
 
 .encabezado p {
   margin: 7px 0 0;
 
-  opacity: .9;
+  opacity: 0.9;
 
   font-size: 14px;
 }
 
 
-/* =====================================
+/* =====================================================
    CONEXIÓN
-===================================== */
+===================================================== */
 
 .conexion {
   display: flex;
@@ -77,9 +105,9 @@ body {
 
   gap: 8px;
 
-  background: rgba(255,255,255,.12);
+  background: rgba(255, 255, 255, 0.14);
 
-  padding: 9px 13px;
+  padding: 9px 14px;
 
   border-radius: 20px;
 
@@ -97,13 +125,13 @@ body {
 
   background: #ffb300;
 
-  box-shadow: 0 0 8px rgba(255,255,255,.7);
+  box-shadow: 0 0 5px rgba(255,255,255,.6);
 }
 
 
-/* =====================================
+/* =====================================================
    CONTENEDOR
-===================================== */
+===================================================== */
 
 .contenedor {
   width: 94%;
@@ -114,12 +142,14 @@ body {
 }
 
 
-/* =====================================
+/* =====================================================
    BARRA DE ACCIONES
-===================================== */
+===================================================== */
 
 .barra-acciones {
-  background: white;
+  background: var(--blanco);
+
+  border: 1px solid var(--borde);
 
   border-radius: 12px;
 
@@ -133,7 +163,9 @@ body {
 
   align-items: center;
 
-  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  gap: 15px;
+
+  box-shadow: var(--sombra);
 }
 
 .barra-acciones strong {
@@ -143,7 +175,7 @@ body {
 }
 
 .barra-acciones span {
-  color: var(--gris);
+  color: var(--texto-secundario);
 
   font-size: 13px;
 }
@@ -155,9 +187,9 @@ body {
 }
 
 
-/* =====================================
+/* =====================================================
    BOTONES
-===================================== */
+===================================================== */
 
 button {
   border: none;
@@ -166,7 +198,10 @@ button {
 
   font-family: inherit;
 
-  transition: .2s;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 #btnActualizar {
@@ -185,12 +220,15 @@ button {
   background: var(--rojo-oscuro);
 
   transform: translateY(-1px);
+
+  box-shadow:
+    0 4px 10px rgba(177, 18, 38, 0.2);
 }
 
 
-/* =====================================
+/* =====================================================
    TARJETAS KPI
-===================================== */
+===================================================== */
 
 .tarjetas {
   display: grid;
@@ -204,7 +242,9 @@ button {
 }
 
 .tarjeta {
-  background: white;
+  background: var(--blanco);
+
+  border: 1px solid var(--borde);
 
   border-radius: 12px;
 
@@ -218,19 +258,17 @@ button {
 
   min-height: 105px;
 
-  box-shadow:
-    0 2px 8px rgba(0,0,0,.06);
+  box-shadow: var(--sombra);
 
-  border: 1px solid #eee;
-
-  transition: .2s;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .tarjeta:hover {
   transform: translateY(-2px);
 
-  box-shadow:
-    0 5px 15px rgba(0,0,0,.09);
+  box-shadow: var(--sombra-hover);
 }
 
 .icono {
@@ -244,17 +282,21 @@ button {
 
   justify-content: center;
 
-  background: #f8e8eb;
+  background: var(--rojo-claro);
+
+  color: var(--rojo);
 
   border-radius: 10px;
 
   font-size: 22px;
+
+  flex-shrink: 0;
 }
 
 .titulo {
   display: block;
 
-  color: var(--gris);
+  color: var(--texto-secundario);
 
   font-size: 11px;
 
@@ -272,12 +314,14 @@ button {
 }
 
 
-/* =====================================
+/* =====================================================
    FILTROS
-===================================== */
+===================================================== */
 
 .filtros {
-  background: white;
+  background: var(--blanco);
+
+  border: 1px solid var(--borde);
 
   padding: 17px;
 
@@ -298,8 +342,7 @@ button {
 
   margin-bottom: 20px;
 
-  box-shadow:
-    0 2px 8px rgba(0,0,0,.06);
+  box-shadow: var(--sombra);
 }
 
 .filtro label {
@@ -309,7 +352,7 @@ button {
 
   font-weight: 700;
 
-  color: var(--gris);
+  color: var(--texto-secundario);
 
   margin-bottom: 6px;
 }
@@ -338,7 +381,7 @@ button {
   border-color: var(--rojo);
 
   box-shadow:
-    0 0 0 2px rgba(177,18,38,.08);
+    0 0 0 2px rgba(177, 18, 38, 0.08);
 }
 
 .btn-limpiar {
@@ -360,9 +403,9 @@ button {
 }
 
 
-/* =====================================
+/* =====================================================
    GRÁFICOS
-===================================== */
+===================================================== */
 
 .graficos {
   display: grid;
@@ -376,7 +419,9 @@ button {
 }
 
 .grafico {
-  background: white;
+  background: var(--blanco);
+
+  border: 1px solid var(--borde);
 
   border-radius: 12px;
 
@@ -384,8 +429,7 @@ button {
 
   min-height: 320px;
 
-  box-shadow:
-    0 2px 8px rgba(0,0,0,.06);
+  box-shadow: var(--sombra);
 }
 
 .grafico-grande {
@@ -415,12 +459,14 @@ button {
 }
 
 
-/* =====================================
-   MAPA DEL PERÚ
-===================================== */
+/* =====================================================
+   MAPA
+===================================================== */
 
 .mapa-panel {
-  background: white;
+  background: var(--blanco);
+
+  border: 1px solid var(--borde);
 
   border-radius: 12px;
 
@@ -428,8 +474,7 @@ button {
 
   margin-bottom: 20px;
 
-  box-shadow:
-    0 2px 8px rgba(0,0,0,.06);
+  box-shadow: var(--sombra);
 }
 
 .mapa-header {
@@ -457,11 +502,11 @@ button {
 
   font-size: 12px;
 
-  color: var(--gris);
+  color: var(--texto-secundario);
 }
 
 .mapa-resumen {
-  background: #f8e8eb;
+  background: var(--rojo-claro);
 
   color: var(--rojo);
 
@@ -479,7 +524,9 @@ button {
 }
 
 
-/* CONTENEDOR DEL MAPA */
+/* =====================================================
+   MAPA DEL PERÚ
+===================================================== */
 
 #mapaPeru {
   width: 100%;
@@ -492,7 +539,9 @@ button {
 }
 
 
-/* MENSAJE DE CARGA */
+/* =====================================================
+   CARGA MAPA
+===================================================== */
 
 .mapa-cargando {
   position: absolute;
@@ -509,9 +558,10 @@ button {
 
   border-radius: 8px;
 
-  box-shadow: 0 3px 12px rgba(0,0,0,.12);
+  box-shadow:
+    0 3px 12px rgba(0,0,0,.12);
 
-  color: var(--gris);
+  color: var(--texto-secundario);
 
   font-size: 13px;
 
@@ -519,7 +569,9 @@ button {
 }
 
 
-/* MARCADORES DEL MAPA */
+/* =====================================================
+   MARCADOR
+===================================================== */
 
 .marcador-sala {
   width: 16px;
@@ -537,12 +589,17 @@ button {
 }
 
 
-/* POPUP */
+/* =====================================================
+   POPUP MAPA
+===================================================== */
 
 .leaflet-popup-content {
   margin: 12px 14px;
 
-  font-family: Arial, Helvetica, sans-serif;
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
 }
 
 .popup-sala {
@@ -570,19 +627,20 @@ button {
 }
 
 
-/* =====================================
+/* =====================================================
    PANEL TABLA
-===================================== */
+===================================================== */
 
 .panel {
-  background: white;
+  background: var(--blanco);
+
+  border: 1px solid var(--borde);
 
   border-radius: 12px;
 
   overflow: hidden;
 
-  box-shadow:
-    0 2px 8px rgba(0,0,0,.06);
+  box-shadow: var(--sombra);
 }
 
 .panel-header {
@@ -608,15 +666,15 @@ button {
 
   margin-top: 4px;
 
-  color: var(--gris);
+  color: var(--texto-secundario);
 
   font-size: 12px;
 }
 
 
-/* =====================================
+/* =====================================================
    TABLA
-===================================== */
+===================================================== */
 
 .tabla-contenedor {
   width: 100%;
@@ -643,9 +701,9 @@ thead th {
 
   z-index: 2;
 
-  background: #f3f4f6;
+  background: #f8fafc;
 
-  color: #4b5563;
+  color: #475569;
 
   padding: 12px 10px;
 
@@ -655,7 +713,7 @@ thead th {
 
   white-space: nowrap;
 
-  border-bottom: 1px solid var(--borde);
+  border-bottom: 2px solid var(--borde);
 }
 
 tbody td {
@@ -663,7 +721,7 @@ tbody td {
 
   font-size: 12px;
 
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid #edf0f2;
 
   white-space: nowrap;
 }
@@ -671,17 +729,18 @@ tbody td {
 tbody tr {
   cursor: pointer;
 
-  transition: .15s;
+  transition:
+    background 0.15s ease;
 }
 
 tbody tr:hover {
-  background: #faf1f3;
+  background: #fff6f7;
 }
 
 .sin-datos {
   text-align: center;
 
-  color: var(--gris);
+  color: var(--texto-secundario);
 
   padding: 35px !important;
 
@@ -689,14 +748,17 @@ tbody tr:hover {
 }
 
 
-/* =====================================
+/* =====================================================
    ESTADOS
-===================================== */
+   ROJO = CRÍTICO
+   AMARILLO = PRÓXIMO
+   VERDE = VIGENTE
+===================================================== */
 
 .estado {
   display: inline-block;
 
-  padding: 5px 9px;
+  padding: 6px 10px;
 
   border-radius: 15px;
 
@@ -705,30 +767,47 @@ tbody tr:hover {
   font-weight: 700;
 
   white-space: nowrap;
+
+  border: 1px solid transparent;
 }
+
+
+/* VIGENTE */
 
 .estado.vigente {
-  background: #e7f7ed;
+  background: var(--verde-fondo);
 
   color: var(--verde);
+
+  border-color: #b8e6c8;
 }
+
+
+/* PRÓXIMA */
 
 .estado.proxima {
-  background: #fff4d6;
+  background: var(--amarillo-fondo);
 
   color: var(--amarillo);
+
+  border-color: #f3d48a;
 }
+
+
+/* VENCIDA - MÁS CRÍTICO */
 
 .estado.vencida {
-  background: #fde8e8;
+  background: var(--rojo-fondo);
 
   color: var(--rojo-alerta);
+
+  border-color: #f3b4b4;
 }
 
 
-/* =====================================
+/* =====================================================
    DIFERENCIAS
-===================================== */
+===================================================== */
 
 .diferencia-positiva {
   color: var(--verde);
@@ -743,15 +822,15 @@ tbody tr:hover {
 }
 
 .diferencia-cero {
-  color: var(--gris);
+  color: var(--texto-secundario);
 
   font-weight: 600;
 }
 
 
-/* =====================================
+/* =====================================================
    MODAL
-===================================== */
+===================================================== */
 
 .modal {
   display: none;
@@ -762,7 +841,7 @@ tbody tr:hover {
 
   z-index: 100;
 
-  background: rgba(0,0,0,.55);
+  background: rgba(15, 23, 42, 0.55);
 
   padding: 30px;
 
@@ -841,6 +920,8 @@ tbody tr:hover {
   border-radius: 8px;
 
   padding: 11px;
+
+  background: #fafbfc;
 }
 
 .modal-item strong {
@@ -848,7 +929,7 @@ tbody tr:hover {
 
   font-size: 10px;
 
-  color: var(--gris);
+  color: var(--texto-secundario);
 
   margin-bottom: 5px;
 
@@ -860,9 +941,9 @@ tbody tr:hover {
 }
 
 
-/* =====================================
-   RESPONSIVE TABLET
-===================================== */
+/* =====================================================
+   TABLET
+===================================================== */
 
 @media (max-width: 1100px) {
 
@@ -883,9 +964,9 @@ tbody tr:hover {
 }
 
 
-/* =====================================
-   RESPONSIVE MÓVIL
-===================================== */
+/* =====================================================
+   MÓVIL
+===================================================== */
 
 @media (max-width: 700px) {
 
@@ -963,8 +1044,6 @@ tbody tr:hover {
   .grafico {
     min-height: 300px;
   }
-
-  /* MAPA EN CELULAR */
 
   #mapaPeru {
     height: 430px;
