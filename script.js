@@ -18,145 +18,115 @@ let marcadoresMapa = [];
 
 
 // ======================================================
-// COORDENADAS DE LAS SALAS
+// CATÁLOGO DE UBICACIONES
 // ======================================================
+// No se agrega ninguna columna al Sheet.
+// La ubicación se determina por el nombre de SALAS.
 //
-// NO SE TOMAN DE GOOGLE SHEETS.
-// Se infieren a partir del nombre de SALAS.
-//
-// Las coordenadas son de referencia geográfica de la
-// ciudad/distrito donde se encuentra la sala.
-//
+// coordenadas: [latitud, longitud]
+// ======================================================
 
 const UBICACIONES_SALAS = {
 
-  // =========================
-  // LIMA METROPOLITANA
-  // =========================
-
-  "2 DE MAYO": [-12.0528, -77.0435],
-
-  "BARRANCO": [-12.1440, -77.0205],
-
-  "BOLIVAR": [-12.0760, -77.0710],
-
-  "CHORRILLOS": [-12.1715, -77.0245],
-
-  "CHOSICA": [-11.9360, -76.6950],
-
-  "COLONIAL": [-12.0620, -77.1050],
-
-  "COMAS": [-11.9440, -77.0610],
-
-  "ELIO": [-12.0690, -77.0750],
-
-  "GAMARRA": [-12.0675, -77.0145],
-
-  "LOS OLIVOS": [-11.9940, -77.0700],
-
-  "LURIN": [-12.2760, -76.8750],
-
-  "MANCO CAPAC": [-12.0680, -77.0150],
-
-  "SAN GERMAN": [-11.9800, -77.0830],
-
-  "SAN JUAN": [-12.1570, -76.9730],
-
-  "SAN MARTIN": [-12.0110, -77.0810],
-
-  "SANTA ANITA": [-12.0430, -76.9710],
-
-  "VENTANILLA": [-11.8750, -77.1180],
-
-  "VILLA": [-12.2140, -76.9380],
-
-  "ZARATE": [-11.9950, -77.0080],
-
-
-  // =========================
-  // LIMA PROVINCIA
-  // =========================
-
-  "BARRANCA": [-10.7530, -77.7600],
-
-  "HUACHO": [-11.1060, -77.6050],
-
-  "HUARAL": [-11.4950, -77.2070],
-
-
-  // =========================
-  // COSTA
-  // =========================
-
-  "CHICLAYO": [-6.7714, -79.8409],
-
-  "CHIMBOTE": [-9.0745, -78.5936],
-
-  "CHINCHA": [-13.4098, -76.1322],
-
-  "HUARAZ": [-9.5278, -77.5278],
-
-  "HUARMEY": [-10.0680, -78.1520],
-
-  "ICA": [-14.0678, -75.7286],
-
-  "ILO": [-17.6394, -71.3375],
-
-  "LAMBAYEQUE": [-6.7011, -79.9061],
-
-  "MOQUEGUA": [-17.1930, -70.9330],
-
-  "PIURA": [-5.1945, -80.6328],
-
-  "SULLANA": [-4.9039, -80.6853],
-
-  "TACNA": [-18.0146, -70.2536],
-
-  "TRUJILLO": [-8.1116, -79.0287],
-
-  "TUMBES": [-3.5669, -80.4515],
-
-
-  // =========================
-  // SIERRA
-  // =========================
+  "2 DE MAYO": [-12.0525, -77.0432],
 
   "ABANCAY": [-13.6339, -72.8814],
 
   "ANDAHUAYLAS": [-13.6556, -73.3872],
 
-  "AREQUIPA": [-16.4090, -71.5375],
+  "AREQUIPA": [-16.3989, -71.5369],
 
   "AYACUCHO": [-13.1588, -74.2232],
 
+  "BAGUA GRANDE": [-5.7560, -78.4380],
+
+  "BARRANCA": [-10.7525, -77.7600],
+
+  "BARRANCO": [-12.1455, -77.0200],
+
+  "BOLIVAR": [-12.0715, -77.0610],
+
   "CAJAMARCA": [-7.1617, -78.5128],
+
+  "CHICLAYO": [-6.7714, -79.8409],
+
+  "CHIMBOTE": [-9.0745, -78.5936],
+
+  "CHINCHA": [-13.4098, -76.1328],
+
+  "CHORRILLOS": [-12.1715, -77.0247],
+
+  "CHOSICA": [-11.9350, -76.6950],
+
+  "COLONIAL": [-12.0570, -77.0950],
+
+  "COMAS": [-11.9430, -77.0620],
 
   "CUSCO": [-13.5319, -71.9675],
 
-  "HUANCAYO": [-12.0651, -75.2049],
+  "ELIO": [-12.0580, -77.0730],
 
-  "JULIACA": [-15.4890, -70.1290],
+  "GAMARRA": [-12.0660, -77.0130],
 
-  "PUNO": [-15.8402, -70.0219],
+  "HUACHO": [-11.1070, -77.6050],
 
+  "HUARAL": [-11.4950, -77.2070],
 
-  // =========================
-  // SELVA
-  // =========================
+  "HUARAZ": [-9.5278, -77.5278],
 
-  "BAGUA GRANDE": [-5.7565, -78.4425],
+  "HUARMEY": [-10.0680, -78.1530],
+
+  "ICA": [-14.0678, -75.7286],
+
+  "ILO": [-17.6394, -71.3375],
 
   "IQUITOS": [-3.7437, -73.2516],
 
   "JAEN": [-5.7073, -78.8078],
 
-  "JAÉN": [-5.7073, -78.8078],
+  "JULIACA": [-15.4997, -70.1333],
+
+  "LAMBAYEQUE": [-6.7011, -79.9061],
+
+  "LOS OLIVOS": [-11.9600, -77.0750],
+
+  "LURIN": [-12.2760, -76.8700],
+
+  "MANCO CAPAC": [-12.0660, -77.0130],
+
+  "MOQUEGUA": [-17.1936, -70.9327],
 
   "MOYOBAMBA": [-6.0340, -76.9728],
 
+  "PIURA": [-5.1945, -80.6328],
+
   "PUCALLPA": [-8.3791, -74.5539],
 
-  "TARAPOTO": [-6.4850, -76.3625]
+  "PUNO": [-15.8402, -70.0219],
+
+  "SAN GERMAN": [-11.9900, -77.0700],
+
+  "SAN JUAN": [-12.1630, -76.9630],
+
+  "SAN MARTIN": [-12.0020, -77.0780],
+
+  "SANTA ANITA": [-12.0430, -76.9720],
+
+  "SULLANA": [-4.9039, -80.6853],
+
+  "TACNA": [-18.0147, -70.2536],
+
+  "TARAPOTO": [-6.4880, -76.3650],
+
+  "TRUJILLO": [-8.1116, -79.0287],
+
+  "TUMBES": [-3.5669, -80.4515],
+
+  "VENTANILLA": [-11.8750, -77.1180],
+
+  "VILLA": [-12.2160, -76.9380],
+
+  "ZARATE": [-12.0180, -76.9970]
 
 };
 
@@ -187,30 +157,29 @@ function inicializarMapa() {
 
   if (!contenedor) return;
 
-  mapaPeru = L.map(
-    "mapaPeru",
-    {
-      zoomControl: true,
-      minZoom: 5,
-      maxZoom: 18
-    }
-  );
+  // Elimina el mensaje "Cargando mapa..."
+  contenedor.innerHTML = "";
+
+  mapaPeru = L.map("mapaPeru", {
+    zoomControl: true,
+    scrollWheelZoom: true
+  });
 
   // OpenStreetMap
   L.tileLayer(
     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     {
       attribution:
-        '&copy; OpenStreetMap contributors'
+        '&copy; OpenStreetMap contributors',
+      maxZoom: 19
     }
   ).addTo(mapaPeru);
 
-
-  // Vista inicial del Perú
-  mapaPeru.setView(
-    [-9.2, -75.0],
-    5.5
-  );
+  // Vista inicial de Perú
+  mapaPeru.fitBounds([
+    [-18.5, -81.5],
+    [-0.5, -68.5]
+  ]);
 
 }
 
@@ -238,17 +207,14 @@ async function cargarDatos() {
 
     const respuesta =
       await fetch(
-        URL_DATOS +
-        "?t=" +
-        Date.now()
+        URL_DATOS + "?t=" + Date.now()
       );
 
 
     if (!respuesta.ok) {
 
       throw new Error(
-        "Error HTTP " +
-        respuesta.status
+        "Error HTTP " + respuesta.status
       );
 
     }
@@ -270,7 +236,6 @@ async function cargarDatos() {
 
     textoConexion.textContent =
       "Google Sheets conectado";
-
 
     indicador.style.background =
       "#21c55d";
@@ -334,24 +299,16 @@ async function cargarDatos() {
 function configurarEventos() {
 
   const buscar =
-    document.getElementById(
-      "buscarSala"
-    );
+    document.getElementById("buscarSala");
 
   const sector =
-    document.getElementById(
-      "filtroSector"
-    );
+    document.getElementById("filtroSector");
 
   const mes =
-    document.getElementById(
-      "filtroMes"
-    );
+    document.getElementById("filtroMes");
 
   const renovacion =
-    document.getElementById(
-      "filtroRenovacion"
-    );
+    document.getElementById("filtroRenovacion");
 
 
   buscar.addEventListener(
@@ -387,14 +344,10 @@ function configurarEventos() {
 function llenarFiltros() {
 
   const sectorSelect =
-    document.getElementById(
-      "filtroSector"
-    );
+    document.getElementById("filtroSector");
 
   const mesSelect =
-    document.getElementById(
-      "filtroMes"
-    );
+    document.getElementById("filtroMes");
 
 
   sectorSelect.innerHTML = `
@@ -412,87 +365,65 @@ function llenarFiltros() {
 
 
   const sectores =
-    [
-      ...new Set(
+    [...new Set(
 
-        datosOriginales
+      datosOriginales
 
-          .map(d =>
-            String(
-              d["SECTOR"] ||
-              ""
-            ).trim()
-          )
+        .map(d =>
+          String(
+            d["SECTOR"] || ""
+          ).trim()
+        )
 
-          .filter(Boolean)
+        .filter(Boolean)
 
-      )
-    ].sort();
+    )].sort();
 
 
-  sectores.forEach(
-    function (sector) {
+  sectores.forEach(function (sector) {
 
-      const option =
-        document.createElement(
-          "option"
-        );
+    const option =
+      document.createElement("option");
 
-      option.value =
-        sector;
+    option.value = sector;
 
-      option.textContent =
-        sector;
+    option.textContent = sector;
 
-      sectorSelect.appendChild(
-        option
-      );
+    sectorSelect.appendChild(option);
 
-    }
-  );
+  });
 
 
   const meses =
-    [
-      ...new Set(
+    [...new Set(
 
-        datosOriginales
+      datosOriginales
 
-          .map(d =>
-            String(
-              d[
-                "MES DE LA ULTIMA EMISIÓN RD"
-              ] ||
-              ""
-            ).trim()
-          )
+        .map(d =>
+          String(
+            d[
+              "MES DE LA ULTIMA EMISIÓN RD"
+            ] || ""
+          ).trim()
+        )
 
-          .filter(Boolean)
+        .filter(Boolean)
 
-      )
-    ].sort();
+    )].sort();
 
 
-  meses.forEach(
-    function (mes) {
+  meses.forEach(function (mes) {
 
-      const option =
-        document.createElement(
-          "option"
-        );
+    const option =
+      document.createElement("option");
 
-      option.value =
-        mes;
+    option.value = mes;
 
-      option.textContent =
-        mes;
+    option.textContent = mes;
 
-      mesSelect.appendChild(
-        option
-      );
+    mesSelect.appendChild(option);
 
-    }
-  );
+  });
 
 }
 
@@ -533,11 +464,9 @@ function aplicarFiltros() {
     datosOriginales.filter(
       function (registro) {
 
-
         const sala =
           String(
-            registro["SALAS"] ||
-            ""
+            registro["SALAS"] || ""
           ).toLowerCase();
 
 
@@ -553,8 +482,7 @@ function aplicarFiltros() {
 
         if (
           sector &&
-          registro["SECTOR"] !==
-          sector
+          registro["SECTOR"] !== sector
         ) {
 
           return false;
@@ -585,8 +513,7 @@ function aplicarFiltros() {
 
 
           if (
-            estado.codigo !==
-            renovacion
+            estado.codigo !== renovacion
           ) {
 
             return false;
@@ -643,7 +570,7 @@ function limpiarFiltros() {
 
 
 // ======================================================
-// ACTUALIZAR TODO EL DASHBOARD
+// ACTUALIZAR TODO
 // ======================================================
 
 function actualizarDashboard() {
@@ -742,17 +669,13 @@ function actualizarKPI() {
   document.getElementById(
     "kpiDiferencia"
   ).textContent =
-    formatearNumero(
-      diferenciaIndeci
-    );
+    formatearNumero(diferenciaIndeci);
 
 
   document.getElementById(
     "kpiDiferenciaGenex"
   ).textContent =
-    formatearNumero(
-      diferenciaGenex
-    );
+    formatearNumero(diferenciaGenex);
 
 }
 
@@ -767,10 +690,7 @@ function sumarCampo(
 ) {
 
   return datos.reduce(
-    function (
-      total,
-      registro
-    ) {
+    function (total, registro) {
 
       const valor =
         Number(
@@ -837,9 +757,7 @@ function actualizarTabla() {
     function (registro) {
 
       const fila =
-        document.createElement(
-          "tr"
-        );
+        document.createElement("tr");
 
 
       const renovacion =
@@ -879,9 +797,7 @@ function actualizarTabla() {
 
         <td>
           ${formatearNumero(
-            registro[
-              "RD MAQ."
-            ]
+            registro["RD MAQ."]
           )}
         </td>
 
@@ -956,17 +872,13 @@ function actualizarTabla() {
         "click",
         function () {
 
-          abrirModal(
-            registro
-          );
+          abrirModal(registro);
 
         }
       );
 
 
-      cuerpo.appendChild(
-        fila
-      );
+      cuerpo.appendChild(fila);
 
     }
   );
@@ -978,9 +890,7 @@ function actualizarTabla() {
 // DIFERENCIA
 // ======================================================
 
-function mostrarDiferencia(
-  valor
-) {
+function mostrarDiferencia(valor) {
 
   const numero =
     Number(valor) || 0;
@@ -1018,12 +928,10 @@ function mostrarDiferencia(
 
 
 // ======================================================
-// ESTADO DE RENOVACIÓN
+// ESTADO RENOVACIÓN
 // ======================================================
 
-function obtenerEstadoRenovacion(
-  fecha
-) {
+function obtenerEstadoRenovacion(fecha) {
 
   if (!fecha) {
 
@@ -1071,11 +979,18 @@ function obtenerEstadoRenovacion(
   );
 
 
+  fechaRenovacion.setHours(
+    0,
+    0,
+    0,
+    0
+  );
+
+
   const dias =
     Math.ceil(
       (
-        fechaRenovacion -
-        hoy
+        fechaRenovacion - hoy
       ) /
       (
         1000 *
@@ -1128,6 +1043,602 @@ function obtenerEstadoRenovacion(
     clase: "vigente"
 
   };
+
+}
+
+
+// ======================================================
+// ======================================================
+// MAPA
+// ======================================================
+// ======================================================
+
+
+// ======================================================
+// OBTENER UBICACIÓN POR NOMBRE DE SALA
+// ======================================================
+
+function obtenerUbicacionSala(nombre) {
+
+  if (!nombre) return null;
+
+
+  let sala =
+    String(nombre)
+      .toUpperCase()
+      .trim();
+
+
+  // Normalizar espacios
+  sala =
+    sala.replace(/\s+/g, " ");
+
+
+  // Eliminar textos de concesionario/restaurante
+  sala =
+    sala.replace(
+      /\s*\(.*?\)\s*/g,
+      ""
+    )
+    .trim();
+
+
+  // Buscar primero coincidencia exacta
+  if (
+    UBICACIONES_SALAS[sala]
+  ) {
+
+    return {
+      centro:
+        UBICACIONES_SALAS[sala],
+      ciudad: sala
+    };
+
+  }
+
+
+  // Buscar por prefijo
+  const claves =
+    Object.keys(
+      UBICACIONES_SALAS
+    );
+
+
+  for (
+    let i = 0;
+    i < claves.length;
+    i++
+  ) {
+
+    const clave =
+      claves[i];
+
+
+    if (
+      sala === clave ||
+      sala.startsWith(
+        clave + " "
+      )
+    ) {
+
+      return {
+
+        centro:
+          UBICACIONES_SALAS[clave],
+
+        ciudad:
+          clave
+
+      };
+
+    }
+
+  }
+
+
+  return null;
+
+}
+
+
+// ======================================================
+// GENERAR SEPARACIÓN DE PUNTOS
+// ======================================================
+
+function calcularPosicionMarcador(
+  centro,
+  indice,
+  total
+) {
+
+  if (
+    !centro ||
+    total <= 1
+  ) {
+
+    return [
+      centro[0],
+      centro[1]
+    ];
+
+  }
+
+
+  // Radio visual pequeño.
+  // Aproximadamente 500-800 metros.
+  const radio =
+    0.006;
+
+
+  const angulo =
+    (
+      2 *
+      Math.PI *
+      indice
+    ) /
+    total;
+
+
+  const lat =
+    centro[0] +
+    Math.cos(angulo) *
+    radio;
+
+
+  const lng =
+    centro[1] +
+    Math.sin(angulo) *
+    radio /
+    Math.cos(
+      centro[0] *
+      Math.PI /
+      180
+    );
+
+
+  return [
+    lat,
+    lng
+  ];
+
+}
+
+
+// ======================================================
+// CREAR ICONO DEL MARCADOR
+// ======================================================
+
+function crearIconoSala(
+  estado
+) {
+
+  let color =
+    "#16803c";
+
+
+  if (
+    estado.codigo ===
+    "VENCIDA"
+  ) {
+
+    color =
+      "#c62828";
+
+  }
+
+
+  else if (
+    estado.codigo ===
+    "PROXIMA"
+  ) {
+
+    color =
+      "#f59e0b";
+
+  }
+
+
+  return L.divIcon({
+
+    className:
+      "icono-marcador-sala",
+
+    html: `
+
+      <div
+        style="
+          width:18px;
+          height:18px;
+          background:${color};
+          border:3px solid white;
+          border-radius:50%;
+          box-shadow:0 2px 8px rgba(0,0,0,.45);
+        ">
+      </div>
+
+    `,
+
+    iconSize: [
+      18,
+      18
+    ],
+
+    iconAnchor: [
+      9,
+      9
+    ],
+
+    popupAnchor: [
+      0,
+      -10
+    ]
+
+  });
+
+}
+
+
+// ======================================================
+// ACTUALIZAR MAPA
+// ======================================================
+
+function actualizarMapa() {
+
+  if (!mapaPeru) return;
+
+
+  // Eliminar marcadores anteriores
+  marcadoresMapa.forEach(
+    function (marcador) {
+
+      mapaPeru.removeLayer(
+        marcador
+      );
+
+    }
+  );
+
+
+  marcadoresMapa = [];
+
+
+  // Agrupar por ciudad
+  const grupos = {};
+
+
+  datosFiltrados.forEach(
+    function (registro) {
+
+      const nombre =
+        String(
+          registro["SALAS"] || ""
+        ).trim();
+
+
+      const ubicacion =
+        obtenerUbicacionSala(
+          nombre
+        );
+
+
+      if (!ubicacion) return;
+
+
+      const clave =
+        ubicacion.ciudad;
+
+
+      if (!grupos[clave]) {
+
+        grupos[clave] = [];
+
+      }
+
+
+      grupos[clave].push({
+
+        registro:
+          registro,
+
+        ubicacion:
+          ubicacion
+
+      });
+
+    }
+  );
+
+
+  let cantidadMapa = 0;
+
+
+  // Crear marcadores
+  Object.keys(grupos).forEach(
+    function (ciudad) {
+
+      const grupo =
+        grupos[ciudad];
+
+
+      grupo.forEach(
+        function (item, indice) {
+
+          const registro =
+            item.registro;
+
+
+          const centro =
+            item.ubicacion.centro;
+
+
+          const posicion =
+            calcularPosicionMarcador(
+              centro,
+              indice,
+              grupo.length
+            );
+
+
+          const estado =
+            obtenerEstadoRenovacion(
+              registro[
+                "RENOVACIÓN PARA INDECI"
+              ]
+            );
+
+
+          const marcador =
+            L.marker(
+              posicion,
+              {
+                icon:
+                  crearIconoSala(
+                    estado
+                  )
+              }
+            );
+
+
+          const nombre =
+            registro["SALAS"] ||
+            "Sin nombre";
+
+
+          const sector =
+            registro["SECTOR"] ||
+            "—";
+
+
+          const espacios =
+            registro[
+              "ESPACIOS POR INDECI"
+            ];
+
+
+          const rd =
+            registro["RD MAQ."];
+
+
+          const genex =
+            registro[
+              "MAQUINAS GENEX"
+            ];
+
+
+          const aforo =
+            registro["AFORO"];
+
+
+          const renovacion =
+            formatearFecha(
+              registro[
+                "RENOVACIÓN PARA INDECI"
+              ]
+            );
+
+
+          let colorEstado =
+            "#16803c";
+
+
+          if (
+            estado.codigo ===
+            "VENCIDA"
+          ) {
+
+            colorEstado =
+              "#c62828";
+
+          }
+
+          else if (
+            estado.codigo ===
+            "PROXIMA"
+          ) {
+
+            colorEstado =
+              "#f59e0b";
+
+          }
+
+
+          const popup = `
+
+            <div
+              class="popup-sala"
+              style="
+                min-width:220px;
+                font-family:Arial,Helvetica,sans-serif;
+              ">
+
+              <h3
+                style="
+                  margin:0 0 8px;
+                  color:#b11226;
+                  font-size:16px;
+                ">
+
+                ${escaparHTML(
+                  String(nombre)
+                )}
+
+              </h3>
+
+
+              <p>
+                <strong>Sector:</strong>
+                ${escaparHTML(
+                  String(sector)
+                )}
+              </p>
+
+
+              <p>
+                <strong>Estado:</strong>
+
+                <span
+                  style="
+                    color:${colorEstado};
+                    font-weight:bold;
+                  ">
+
+                  ${escaparHTML(
+                    estado.texto
+                  )}
+
+                </span>
+
+              </p>
+
+
+              <p>
+                <strong>Renovación:</strong>
+                ${escaparHTML(
+                  renovacion
+                )}
+              </p>
+
+
+              <hr
+                style="
+                  border:0;
+                  border-top:1px solid #eee;
+                  margin:8px 0;
+                "
+              >
+
+
+              <p>
+                <strong>Espacios INDECI:</strong>
+                ${formatearNumero(
+                  espacios
+                )}
+              </p>
+
+
+              <p>
+                <strong>RD Máquinas:</strong>
+                ${formatearNumero(
+                  rd
+                )}
+              </p>
+
+
+              <p>
+                <strong>GENEX:</strong>
+                ${formatearNumero(
+                  genex
+                )}
+              </p>
+
+
+              <p>
+                <strong>Aforo:</strong>
+                ${formatearNumero(
+                  aforo
+                )}
+              </p>
+
+            </div>
+
+          `;
+
+
+          marcador
+            .bindPopup(
+              popup
+            )
+            .addTo(
+              mapaPeru
+            );
+
+
+          // Abrir modal con doble clic
+          marcador.on(
+            "dblclick",
+            function () {
+
+              abrirModal(
+                registro
+              );
+
+            }
+          );
+
+
+          marcadoresMapa.push(
+            marcador
+          );
+
+
+          cantidadMapa++;
+
+        }
+      );
+
+    }
+  );
+
+
+  // Actualizar contador
+  const contador =
+    document.getElementById(
+      "salasMapa"
+    );
+
+
+  if (contador) {
+
+    contador.textContent =
+      cantidadMapa;
+
+  }
+
+
+  // Si existen resultados,
+  // ajustar mapa a las salas
+  if (
+    marcadoresMapa.length > 0
+  ) {
+
+    const grupo =
+      L.featureGroup(
+        marcadoresMapa
+      );
+
+
+    mapaPeru.fitBounds(
+      grupo.getBounds(),
+      {
+        padding: [
+          40,
+          40
+        ],
+        maxZoom: 12
+      }
+    );
+
+  }
 
 }
 
@@ -1330,7 +1841,7 @@ function crearGraficoRDGenex() {
 
 
 // ======================================================
-// GRÁFICO POR SECTOR
+// GRÁFICO SECTORES
 // ======================================================
 
 function crearGraficoSectores() {
@@ -1561,347 +2072,10 @@ function crearGraficoRenovaciones() {
 
 
 // ======================================================
-// MAPA
-// ======================================================
-
-function actualizarMapa() {
-
-  if (!mapaPeru) return;
-
-
-  // Eliminar marcadores anteriores
-
-  marcadoresMapa.forEach(
-    function (marcador) {
-
-      mapaPeru.removeLayer(
-        marcador
-      );
-
-    }
-  );
-
-
-  marcadoresMapa = [];
-
-
-  let cantidadUbicada = 0;
-
-
-  datosFiltrados.forEach(
-    function (registro) {
-
-      const sala =
-        String(
-          registro["SALAS"] ||
-          ""
-        ).trim();
-
-
-      const coordenadas =
-        obtenerCoordenadasSala(
-          sala
-        );
-
-
-      if (!coordenadas) {
-
-        console.warn(
-          "Sala sin coordenadas:",
-          sala
-        );
-
-        return;
-
-      }
-
-
-      cantidadUbicada++;
-
-
-      const icono =
-        L.divIcon({
-
-          className:
-            "",
-
-          html:
-            '<div class="marcador-sala"></div>',
-
-          iconSize: [
-            16,
-            16
-          ],
-
-          iconAnchor: [
-            8,
-            8
-          ],
-
-          popupAnchor: [
-            0,
-            -8
-          ]
-
-        });
-
-
-      const marcador =
-        L.marker(
-          coordenadas,
-          {
-            icon: icono
-          }
-        );
-
-
-      const renovacion =
-        obtenerEstadoRenovacion(
-          registro[
-            "RENOVACIÓN PARA INDECI"
-          ]
-        );
-
-
-      const direccion =
-        obtenerDireccion(
-          registro
-        );
-
-
-      marcador.bindPopup(`
-
-        <div class="popup-sala">
-
-          <h3>
-            ${escaparHTML(sala)}
-          </h3>
-
-          <p>
-            <strong>Sector:</strong>
-            ${escaparHTML(
-              registro["SECTOR"] ||
-              "—"
-            )}
-          </p>
-
-          <p>
-            <strong>Dirección:</strong><br>
-            ${escaparHTML(
-              direccion
-            )}
-          </p>
-
-          <p>
-            <strong>Aforo:</strong>
-            ${formatearNumero(
-              registro["AFORO"]
-            )}
-          </p>
-
-          <p>
-            <strong>Renovación:</strong>
-            ${renovacion.texto}
-          </p>
-
-        </div>
-
-      `);
-
-
-      marcador.addTo(
-        mapaPeru
-      );
-
-
-      marcadoresMapa.push(
-        marcador
-      );
-
-    }
-  );
-
-
-  const contadorMapa =
-    document.getElementById(
-      "salasMapa"
-    );
-
-
-  if (contadorMapa) {
-
-    contadorMapa.textContent =
-      cantidadUbicada;
-
-  }
-
-}
-
-
-// ======================================================
-// OBTENER COORDENADAS POR NOMBRE DE SALA
-// ======================================================
-
-function obtenerCoordenadasSala(
-  nombre
-) {
-
-  const normalizado =
-    normalizarNombreSala(
-      nombre
-    );
-
-
-  // Primero busca coincidencia exacta
-  if (
-    UBICACIONES_SALAS[
-      normalizado
-    ]
-  ) {
-
-    return UBICACIONES_SALAS[
-      normalizado
-    ];
-
-  }
-
-
-  // Después intenta identificar la ciudad
-  // al inicio del nombre.
-  //
-  // Ejemplo:
-  // CHINCHA 4
-  // CHINCHA 3
-  // CHINCHA 1
-  //
-  // todos utilizarán CHINCHA.
-
-
-  const claves =
-    Object.keys(
-      UBICACIONES_SALAS
-    )
-      .sort(
-        (a, b) =>
-          b.length - a.length
-      );
-
-
-  for (
-    let i = 0;
-    i < claves.length;
-    i++
-  ) {
-
-    const clave =
-      claves[i];
-
-
-    if (
-      normalizado === clave ||
-      normalizado.startsWith(
-        clave + " "
-      )
-    ) {
-
-      return UBICACIONES_SALAS[
-        clave
-      ];
-
-    }
-
-  }
-
-
-  return null;
-
-}
-
-
-// ======================================================
-// NORMALIZAR NOMBRE DE SALA
-// ======================================================
-
-function normalizarNombreSala(
-  nombre
-) {
-
-  return String(
-    nombre || ""
-  )
-
-    .toUpperCase()
-
-    .normalize(
-      "NFD"
-    )
-
-    .replace(
-      /[\u0300-\u036f]/g,
-      ""
-    )
-
-    // Elimina contenido entre paréntesis
-    .replace(
-      /\([^)]*\)/g,
-      ""
-    )
-
-    // Convierte espacios y saltos
-    // de línea en un solo espacio
-    .replace(
-      /\s+/g,
-      " "
-    )
-
-    .trim();
-
-}
-
-
-// ======================================================
-// DIRECCIÓN
-// ======================================================
-//
-// Si tu Sheet ya tiene DIRECCIÓN, se utiliza.
-// Si no existe, se informa que no está disponible.
-//
-
-function obtenerDireccion(
-  registro
-) {
-
-  const direccion =
-    registro["DIRECCIÓN"] ||
-    registro["DIRECCION"] ||
-    "";
-
-
-  if (
-    String(
-      direccion
-    ).trim()
-  ) {
-
-    return String(
-      direccion
-    ).trim();
-
-  }
-
-
-  return "Dirección no registrada";
-
-}
-
-
-// ======================================================
 // MODAL
 // ======================================================
 
-function abrirModal(
-  registro
-) {
+function abrirModal(registro) {
 
   const modal =
     document.getElementById(
@@ -1926,8 +2100,7 @@ function abrirModal(
     "Detalle de sala";
 
 
-  contenido.innerHTML =
-    "";
+  contenido.innerHTML = "";
 
 
   const campos = [
@@ -1993,9 +2166,7 @@ function abrirModal(
     function (campo) {
 
       const valor =
-        registro[
-          campo[0]
-        ];
+        registro[campo[0]];
 
 
       const item =
@@ -2112,14 +2283,10 @@ document.addEventListener(
 // FORMATEAR FECHA
 // ======================================================
 
-function formatearFecha(
-  valor
-) {
+function formatearFecha(valor) {
 
   const fecha =
-    convertirFecha(
-      valor
-    );
+    convertirFecha(valor);
 
 
   if (!fecha) {
@@ -2149,9 +2316,7 @@ function formatearFecha(
 // CONVERTIR FECHA
 // ======================================================
 
-function convertirFecha(
-  valor
-) {
+function convertirFecha(valor) {
 
   if (!valor) {
 
@@ -2160,10 +2325,115 @@ function convertirFecha(
   }
 
 
-  const fecha =
-    new Date(
-      valor
+  // Si ya es Date
+  if (
+    valor instanceof Date
+  ) {
+
+    return isNaN(
+      valor.getTime()
+    )
+      ? null
+      : valor;
+
+  }
+
+
+  const texto =
+    String(valor)
+      .trim();
+
+
+  if (!texto) return null;
+
+
+  // Formato DD/MM/YYYY
+  let coincidencia =
+    texto.match(
+      /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/
     );
+
+
+  if (coincidencia) {
+
+    const dia =
+      Number(
+        coincidencia[1]
+      );
+
+    const mes =
+      Number(
+        coincidencia[2]
+      ) - 1;
+
+    const año =
+      Number(
+        coincidencia[3]
+      );
+
+
+    const fecha =
+      new Date(
+        año,
+        mes,
+        dia
+      );
+
+
+    return isNaN(
+      fecha.getTime()
+    )
+      ? null
+      : fecha;
+
+  }
+
+
+  // Formato YYYY-MM-DD
+  coincidencia =
+    texto.match(
+      /^(\d{4})-(\d{1,2})-(\d{1,2})/
+    );
+
+
+  if (coincidencia) {
+
+    const año =
+      Number(
+        coincidencia[1]
+      );
+
+    const mes =
+      Number(
+        coincidencia[2]
+      ) - 1;
+
+    const dia =
+      Number(
+        coincidencia[3]
+      );
+
+
+    const fecha =
+      new Date(
+        año,
+        mes,
+        dia
+      );
+
+
+    return isNaN(
+      fecha.getTime()
+    )
+      ? null
+      : fecha;
+
+  }
+
+
+  // Fecha normal de Google
+  const fecha =
+    new Date(texto);
 
 
   if (
@@ -2186,14 +2456,10 @@ function convertirFecha(
 // FORMATO NÚMERO
 // ======================================================
 
-function formatearNumero(
-  valor
-) {
+function formatearNumero(valor) {
 
   const numero =
-    Number(
-      valor
-    ) || 0;
+    Number(valor) || 0;
 
 
   return numero.toLocaleString(
@@ -2207,9 +2473,7 @@ function formatearNumero(
 // ESCAPAR HTML
 // ======================================================
 
-function escaparHTML(
-  valor
-) {
+function escaparHTML(valor) {
 
   if (
     valor === null ||
@@ -2221,9 +2485,7 @@ function escaparHTML(
   }
 
 
-  return String(
-    valor
-  )
+  return String(valor)
 
     .replace(
       /&/g,
@@ -2256,9 +2518,6 @@ function escaparHTML(
 // ======================================================
 // ACTUALIZACIÓN AUTOMÁTICA
 // ======================================================
-//
-// Actualiza los datos cada 5 minutos.
-//
 
 setInterval(
   function () {
