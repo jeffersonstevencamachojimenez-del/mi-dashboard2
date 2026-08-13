@@ -416,6 +416,161 @@ button {
 
 
 /* =====================================
+   MAPA DEL PERÚ
+===================================== */
+
+.mapa-panel {
+  background: white;
+
+  border-radius: 12px;
+
+  overflow: hidden;
+
+  margin-bottom: 20px;
+
+  box-shadow:
+    0 2px 8px rgba(0,0,0,.06);
+}
+
+.mapa-header {
+  padding: 18px 20px;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  border-bottom: 1px solid var(--borde);
+}
+
+.mapa-header h2 {
+  margin: 0;
+
+  font-size: 18px;
+
+  color: var(--texto);
+}
+
+.mapa-header p {
+  margin: 5px 0 0;
+
+  font-size: 12px;
+
+  color: var(--gris);
+}
+
+.mapa-resumen {
+  background: #f8e8eb;
+
+  color: var(--rojo);
+
+  padding: 8px 14px;
+
+  border-radius: 20px;
+
+  font-size: 12px;
+
+  white-space: nowrap;
+}
+
+.mapa-resumen strong {
+  font-size: 16px;
+}
+
+
+/* CONTENEDOR DEL MAPA */
+
+#mapaPeru {
+  width: 100%;
+
+  height: 560px;
+
+  background: #eef3f7;
+
+  position: relative;
+}
+
+
+/* MENSAJE DE CARGA */
+
+.mapa-cargando {
+  position: absolute;
+
+  top: 50%;
+
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+
+  background: white;
+
+  padding: 12px 18px;
+
+  border-radius: 8px;
+
+  box-shadow: 0 3px 12px rgba(0,0,0,.12);
+
+  color: var(--gris);
+
+  font-size: 13px;
+
+  z-index: 500;
+}
+
+
+/* MARCADORES DEL MAPA */
+
+.marcador-sala {
+  width: 16px;
+
+  height: 16px;
+
+  background: var(--rojo);
+
+  border: 3px solid white;
+
+  border-radius: 50%;
+
+  box-shadow:
+    0 2px 7px rgba(0,0,0,.35);
+}
+
+
+/* POPUP */
+
+.leaflet-popup-content {
+  margin: 12px 14px;
+
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.popup-sala {
+  min-width: 180px;
+}
+
+.popup-sala h3 {
+  margin: 0 0 7px;
+
+  color: var(--rojo);
+
+  font-size: 15px;
+}
+
+.popup-sala p {
+  margin: 4px 0;
+
+  font-size: 12px;
+
+  color: #555;
+}
+
+.popup-sala strong {
+  color: var(--texto);
+}
+
+
+/* =====================================
    PANEL TABLA
 ===================================== */
 
@@ -807,6 +962,22 @@ tbody tr:hover {
 
   .grafico {
     min-height: 300px;
+  }
+
+  /* MAPA EN CELULAR */
+
+  #mapaPeru {
+    height: 430px;
+  }
+
+  .mapa-header {
+    align-items: flex-start;
+
+    gap: 10px;
+  }
+
+  .mapa-resumen {
+    font-size: 11px;
   }
 
   .modal {
