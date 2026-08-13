@@ -1,444 +1,333 @@
 // ======================================================
-// CONFIGURACIÓN
+// DASHBOARD DE PRODUCCIÓN
+// VERSIÓN OPTIMIZADA
 // ======================================================
+
+
+// ======================================================
+// 01. GOOGLE SHEETS
+// ======================================================
+
+const SHEET_ID =
+  "1kR5qsAetOMi2Szb4c-gVo3vVhZhwJUC_AgSNI13eluY";
+
+const SHEET_GID =
+  "683959855";
 
 const URL_DATOS =
-  "https://script.google.com/macros/s/AKfycbzXWgrSkF-V761R87WC4kkn08oXbzTD3VTt1tDsIJpBOE3kljG1PF3bVn1eP8xfU49Hlg/exec";
+  `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${SHEET_GID}`;
 
-let datosOriginales = [];
+
+// ======================================================
+// 02. VARIABLES
+// ======================================================
+
+let datos = [];
+
 let datosFiltrados = [];
 
-let graficoIndeciRD = null;
-let graficoRDGenex = null;
-let graficoSectores = null;
-let graficoRenovaciones = null;
-
-let mapaPeru = null;
-let marcadoresMapa = [];
+let graficos = {};
 
 
 // ======================================================
-// PALETA DE COLORES PARA LAS BARRAS DE SECTORES
+// 03. MESES
 // ======================================================
 
-const coloresSectores = [
-  "#B72EB1",
-  "#2E86DE",
-  "#00A884",
-  "#F39C12",
-  "#E74C3C",
-  "#8E44AD",
-  "#16A085",
-  "#D35400",
-  "#2980B9",
-  "#27AE60",
-  "#C0392B",
-  "#7F8C8D",
-  "#9B59B6",
-  "#1ABC9C",
-  "#F1C40F",
-  "#E67E22",
-  "#3498DB",
-  "#2ECC71",
-  "#E91E63",
-  "#795548"
+const MESES = [
+
+  "ENERO",
+  "FEBRERO",
+  "MARZO",
+  "ABRIL",
+  "MAYO",
+  "JUNIO",
+  "JULIO",
+  "AGOSTO",
+  "SEPTIEMBRE",
+  "OCTUBRE",
+  "NOVIEMBRE",
+  "DICIEMBRE"
+
 ];
 
 
 // ======================================================
-// CATÁLOGO DE UBICACIONES
+// 04. CONFIGURACIÓN DE INDICADORES
 // ======================================================
 
-const UBICACIONES_SALAS = {
+const CONFIG_INDICADORES = {
 
-  "2 DE MAYO": [-12.0525, -77.0432],
-  "ABANCAY": [-13.6339, -72.8814],
-  "ANDAHUAYLAS": [-13.6556, -73.3872],
-  "AREQUIPA": [-16.3989, -71.5369],
-  "AYACUCHO": [-13.1588, -74.2232],
-  "BAGUA GRANDE": [-5.7560, -78.4380],
-  "BARRANCA": [-10.7525, -77.7600],
-  "BARRANCO": [-12.1455, -77.0200],
-  "BOLIVAR": [-12.0715, -77.0610],
-  "CAJAMARCA": [-7.1617, -78.5128],
-  "CHICLAYO": [-6.7714, -79.8409],
-  "CHIMBOTE": [-9.0745, -78.5936],
-  "CHINCHA": [-13.4098, -76.1328],
-  "CHORRILLOS": [-12.1715, -77.0247],
-  "CHOSICA": [-11.9350, -76.6950],
-  "COLONIAL": [-12.0570, -77.0950],
-  "COMAS": [-11.9430, -77.0620],
-  "CUSCO": [-13.5319, -71.9675],
-  "ELIO": [-12.0580, -77.0730],
-  "GAMARRA": [-12.0660, -77.0130],
-  "HUACHO": [-11.1070, -77.6050],
-  "HUARAL": [-11.4950, -77.2070],
-  "HUARAZ": [-9.5278, -77.5278],
-  "HUARMEY": [-10.0680, -78.1530],
-  "ICA": [-14.0678, -75.7286],
-  "ILO": [-17.6394, -71.3375],
-  "IQUITOS": [-3.7437, -73.2516],
-  "JAEN": [-5.7073, -78.8078],
-  "JULIACA": [-15.4997, -70.1333],
-  "LAMBAYEQUE": [-6.7011, -79.9061],
-  "LOS OLIVOS": [-11.9600, -77.0750],
-  "LURIN": [-12.2760, -76.8700],
-  "MANCO CAPAC": [-12.0660, -77.0130],
-  "MOQUEGUA": [-17.1936, -70.9327],
-  "MOYOBAMBA": [-6.0340, -76.9728],
-  "PIURA": [-5.1945, -80.6328],
-  "PUCALLPA": [-8.3791, -74.5539],
-  "PUNO": [-15.8402, -70.0219],
-  "SAN GERMAN": [-11.9900, -77.0700],
-  "SAN JUAN": [-12.1630, -76.9630],
-  "SAN MARTIN": [-12.0020, -77.0780],
-  "SANTA ANITA": [-12.0430, -76.9720],
-  "SULLANA": [-4.9039, -80.6853],
-  "TACNA": [-18.0147, -70.2536],
-  "TARAPOTO": [-6.4880, -76.3650],
-  "TRUJILLO": [-8.1116, -79.0287],
-  "TUMBES": [-3.5669, -80.4515],
-  "VENTANILLA": [-11.8750, -77.1180],
-  "VILLA": [-12.2160, -76.9380],
-  "ZARATE": [-12.0180, -76.9970]
+  "COIN": {
+    tipo: "total"
+  },
+
+  "COIN PROM": {
+    tipo: "promedio"
+  },
+
+  "VENTA": {
+    tipo: "total"
+  },
+
+  "VENTA PROM": {
+    tipo: "promedio"
+  },
+
+  "NETWIN ($)": {
+    tipo: "total"
+  },
+
+  "T.C": {
+    tipo: "promedio"
+  },
+
+  "% PAGO": {
+    tipo: "promedio"
+  }
 
 };
 
 
 // ======================================================
-// INICIO
+// 05. INICIO
 // ======================================================
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener(
+  "DOMContentLoaded",
+  iniciar
+);
+
+
+function iniciar() {
 
   configurarEventos();
 
-  inicializarMapa();
-
   cargarDatos();
 
-});
-
-
-// ======================================================
-// INICIALIZAR MAPA
-// ======================================================
-
-function inicializarMapa() {
-
-  const contenedor =
-    document.getElementById("mapaPeru");
-
-  if (!contenedor) return;
-
-  contenedor.innerHTML = "";
-
-  mapaPeru = L.map("mapaPeru", {
-
-    zoomControl: true,
-
-    scrollWheelZoom: true
-
-  });
-
-  L.tileLayer(
-    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    {
-
-      attribution:
-        "&copy; OpenStreetMap contributors",
-
-      maxZoom: 19
-
-    }
-  ).addTo(mapaPeru);
-
-  mapaPeru.fitBounds([
-    [-18.5, -81.5],
-    [-0.5, -68.5]
-  ]);
-
 }
 
 
 // ======================================================
-// CARGAR DATOS DESDE GOOGLE SHEETS
-// ======================================================
-
-async function cargarDatos() {
-
-  const textoConexion =
-    document.getElementById("textoConexion");
-
-  const indicador =
-    document.getElementById("indicadorConexion");
-
-  try {
-
-    if (textoConexion) {
-      textoConexion.textContent =
-        "Conectando con Google Sheets...";
-    }
-
-    if (indicador) {
-      indicador.style.background =
-        "#ffb300";
-    }
-
-    const respuesta =
-      await fetch(
-        URL_DATOS + "?t=" + Date.now()
-      );
-
-    if (!respuesta.ok) {
-      throw new Error(
-        "Error HTTP " +
-        respuesta.status
-      );
-    }
-
-    const datos =
-      await respuesta.json();
-
-    datosOriginales =
-      Array.isArray(datos)
-        ? datos
-        : [];
-
-    datosFiltrados =
-      [...datosOriginales];
-
-    if (textoConexion) {
-      textoConexion.textContent =
-        "Google Sheets conectado";
-    }
-
-    if (indicador) {
-      indicador.style.background =
-        "#21c55d";
-    }
-
-    const cantidad =
-      document.getElementById(
-        "cantidadSalas"
-      );
-
-    if (cantidad) {
-      cantidad.textContent =
-        datosOriginales.length;
-    }
-
-    llenarFiltros();
-
-    actualizarDashboard();
-
-  } catch (error) {
-
-    console.error(
-      "Error cargando datos:",
-      error
-    );
-
-    if (textoConexion) {
-      textoConexion.textContent =
-        "Error de conexión";
-    }
-
-    if (indicador) {
-      indicador.style.background =
-        "#dc2626";
-    }
-
-    const tabla =
-      document.getElementById(
-        "tablaCuerpo"
-      );
-
-    if (tabla) {
-
-      tabla.innerHTML = `
-
-        <tr>
-
-          <td
-            colspan="11"
-            class="sin-datos">
-
-            ❌ No se pudieron cargar
-            los datos de Google Sheets.
-
-          </td>
-
-        </tr>
-
-      `;
-
-    }
-
-  }
-
-}
-
-
-// ======================================================
-// CONFIGURAR EVENTOS
+// 06. EVENTOS
 // ======================================================
 
 function configurarEventos() {
 
-  const buscar =
-    document.getElementById("buscarSala");
+  const ids = [
 
-  const sector =
-    document.getElementById("filtroSector");
+    "filtroSala",
+    "filtroMarca",
+    "filtroSerie",
+    "filtroJuego",
+    "filtroMes",
+    "filtroAnio",
+    "filtroIndicador"
 
-  const mes =
-    document.getElementById("filtroMes");
+  ];
 
-  const renovacion =
-    document.getElementById("filtroRenovacion");
 
-  if (buscar) {
-    buscar.addEventListener(
-      "input",
-      aplicarFiltros
+  ids.forEach(
+    id => {
+
+      const elemento =
+        document.getElementById(id);
+
+      if (elemento) {
+
+        elemento.addEventListener(
+          "change",
+          manejarFiltro
+        );
+
+      }
+
+    }
+  );
+
+
+  document
+    .getElementById("btnLimpiar")
+    ?.addEventListener(
+      "click",
+      limpiarFiltros
     );
+
+}
+
+
+// ======================================================
+// 07. CARGAR GOOGLE SHEETS
+// ======================================================
+
+async function cargarDatos() {
+
+  cambiarEstado(
+    "Conectando con Google Sheets...",
+    "#f59e0b"
+  );
+
+
+  try {
+
+    const respuesta =
+      await fetch(
+        URL_DATOS +
+        "&t=" +
+        Date.now()
+      );
+
+
+    if (!respuesta.ok) {
+
+      throw new Error(
+        "HTTP " +
+        respuesta.status
+      );
+
+    }
+
+
+    const texto =
+      await respuesta.text();
+
+
+    datos =
+      convertirGViz(texto);
+
+
+    if (!datos.length) {
+
+      throw new Error(
+        "No se encontraron datos."
+      );
+
+    }
+
+
+    datosFiltrados =
+      datos;
+
+
+    cambiarEstado(
+      "Google Sheets conectado",
+      "#16a34a"
+    );
+
+
+    llenarTodosLosFiltros();
+
+    actualizarDashboard();
+
   }
 
-  if (sector) {
-    sector.addEventListener(
-      "change",
-      aplicarFiltros
-    );
-  }
+  catch (error) {
 
-  if (mes) {
-    mes.addEventListener(
-      "change",
-      aplicarFiltros
-    );
-  }
+    console.error(error);
 
-  if (renovacion) {
-    renovacion.addEventListener(
-      "change",
-      aplicarFiltros
+    cambiarEstado(
+      "Error al conectar con Google Sheets",
+      "#dc2626"
     );
+
   }
 
 }
 
 
 // ======================================================
-// LLENAR FILTROS
+// 08. CONVERTIR GVIZ
 // ======================================================
 
-function llenarFiltros() {
+function convertirGViz(texto) {
 
-  const sectorSelect =
-    document.getElementById(
-      "filtroSector"
+  const inicio =
+    texto.indexOf("{");
+
+  const fin =
+    texto.lastIndexOf("}");
+
+
+  if (
+    inicio === -1 ||
+    fin === -1
+  ) {
+
+    throw new Error(
+      "Respuesta inválida de Google Sheets."
     );
 
-  const mesSelect =
-    document.getElementById(
-      "filtroMes"
-    );
-
-  if (!sectorSelect || !mesSelect) {
-    return;
   }
 
-  sectorSelect.innerHTML = `
-    <option value="">
-      Todos los sectores
-    </option>
-  `;
 
-  mesSelect.innerHTML = `
-    <option value="">
-      Todos los meses
-    </option>
-  `;
-
-  const sectores =
-    [
-      ...new Set(
-
-        datosOriginales
-
-          .map(
-            d =>
-              String(
-                d["SECTOR"] || ""
-              ).trim()
-          )
-
-          .filter(Boolean)
-
+  const json =
+    JSON.parse(
+      texto.substring(
+        inicio,
+        fin + 1
       )
-    ]
-      .sort();
+    );
 
-  sectores.forEach(
-    function (sector) {
 
-      const option =
-        document.createElement(
-          "option"
-        );
+  const filas =
+    json?.table?.rows || [];
 
-      option.value =
-        sector;
 
-      option.textContent =
-        sector;
+  return filas.map(
+    fila => {
 
-      sectorSelect.appendChild(
-        option
-      );
+      const c =
+        fila.c || [];
 
-    }
-  );
 
-  const meses =
-    [
-      ...new Set(
+      return {
 
-        datosOriginales
+        marca:
+          celda(c, 0),
 
-          .map(
-            d =>
-              String(
-                d[
-                  "MES DE LA ULTIMA EMISIÓN RD"
-                ] || ""
-              ).trim()
-          )
+        serie:
+          celda(c, 2),
 
-          .filter(Boolean)
+        juego:
+          celda(c, 5),
 
-      )
-    ]
-      .sort();
+        coin:
+          numero(celda(c, 7)),
 
-  meses.forEach(
-    function (mes) {
+        coinProm:
+          numero(celda(c, 8)),
 
-      const option =
-        document.createElement(
-          "option"
-        );
+        venta:
+          numero(celda(c, 9)),
 
-      option.value =
-        mes;
+        ventaProm:
+          numero(celda(c, 10)),
 
-      option.textContent =
-        mes;
+        netwin:
+          numero(celda(c, 11)),
 
-      mesSelect.appendChild(
-        option
-      );
+        gplayed:
+          numero(celda(c, 12)),
+
+        pago:
+          numero(celda(c, 13)),
+
+        sala:
+          celda(c, 15),
+
+        mes:
+          normalizarMes(
+            celda(c, 16)
+          ),
+
+        anio:
+          String(
+            celda(c, 17)
+          ).trim(),
+
+        tc:
+          numero(celda(c, 19))
+
+      };
 
     }
   );
@@ -447,650 +336,974 @@ function llenarFiltros() {
 
 
 // ======================================================
-// APLICAR FILTROS
+// 09. CELDA
 // ======================================================
 
-function aplicarFiltros() {
+function celda(columnas, indice) {
 
-  const buscar =
-    document.getElementById(
-      "buscarSala"
+  const c =
+    columnas[indice];
+
+  if (!c) {
+
+    return "";
+
+  }
+
+  if (
+    c.v !== undefined &&
+    c.v !== null
+  ) {
+
+    return c.v;
+
+  }
+
+  return c.f || "";
+
+}
+
+
+// ======================================================
+// 10. NÚMERO
+// ======================================================
+
+function numero(valor) {
+
+  if (
+    valor === null ||
+    valor === undefined ||
+    valor === ""
+  ) {
+
+    return 0;
+
+  }
+
+
+  if (
+    typeof valor === "number"
+  ) {
+
+    return Number.isFinite(valor)
+      ? valor
+      : 0;
+
+  }
+
+
+  let t =
+    String(valor)
+      .trim()
+      .replace(/%/g, "");
+
+
+  if (
+    t.includes(",") &&
+    t.includes(".")
+  ) {
+
+    if (
+      t.lastIndexOf(",") >
+      t.lastIndexOf(".")
+    ) {
+
+      t =
+        t
+          .replace(/\./g, "")
+          .replace(",", ".");
+
+    }
+
+    else {
+
+      t =
+        t.replace(/,/g, "");
+
+    }
+
+  }
+
+  else if (
+    t.includes(",")
+  ) {
+
+    const partes =
+      t.split(",");
+
+
+    if (
+      partes.length === 2 &&
+      partes[1].length <= 2
+    ) {
+
+      t =
+        t.replace(",", ".");
+
+    }
+
+    else {
+
+      t =
+        t.replace(/,/g, "");
+
+    }
+
+  }
+
+
+  t =
+    t.replace(
+      /[^0-9.-]/g,
+      ""
     );
 
-  const sectorSelect =
+
+  const n =
+    Number(t);
+
+
+  return Number.isFinite(n)
+    ? n
+    : 0;
+
+}
+
+
+// ======================================================
+// 11. NORMALIZAR TEXTO
+// ======================================================
+
+function texto(valor) {
+
+  return String(
+    valor ?? ""
+  )
+    .trim()
+    .toUpperCase();
+
+}
+
+
+// ======================================================
+// 12. NORMALIZAR MES
+// ======================================================
+
+function normalizarMes(valor) {
+
+  let mes =
+    texto(valor);
+
+
+  const n =
+    Number(mes);
+
+
+  if (
+    Number.isInteger(n) &&
+    n >= 1 &&
+    n <= 12
+  ) {
+
+    return MESES[n - 1];
+
+  }
+
+
+  const equivalencias = {
+
+    ENE: "ENERO",
+    FEB: "FEBRERO",
+    MAR: "MARZO",
+    ABR: "ABRIL",
+    MAY: "MAYO",
+    JUN: "JUNIO",
+    JUL: "JULIO",
+    AGO: "AGOSTO",
+    SEP: "SEPTIEMBRE",
+    SET: "SEPTIEMBRE",
+    OCT: "OCTUBRE",
+    NOV: "NOVIEMBRE",
+    DIC: "DICIEMBRE"
+
+  };
+
+
+  return equivalencias[mes] || mes;
+
+}
+
+
+// ======================================================
+// 13. ESTADO
+// ======================================================
+
+function cambiarEstado(
+  mensaje,
+  color
+) {
+
+  const textoConexion =
     document.getElementById(
-      "filtroSector"
+      "textoConexion"
     );
 
-  const mesSelect =
+  const punto =
     document.getElementById(
-      "filtroMes"
+      "indicadorConexion"
     );
 
-  const renovacionSelect =
-    document.getElementById(
-      "filtroRenovacion"
-    );
 
-  const texto =
-    buscar
-      ? buscar.value
-          .toLowerCase()
-          .trim()
-      : "";
+  if (textoConexion) {
 
-  const sector =
-    sectorSelect
-      ? sectorSelect.value
-      : "";
+    textoConexion.textContent =
+      mensaje;
 
-  const mes =
-    mesSelect
-      ? mesSelect.value
-      : "";
+  }
 
-  const renovacion =
-    renovacionSelect
-      ? renovacionSelect.value
-      : "";
+
+  if (punto) {
+
+    punto.style.background =
+      color;
+
+  }
+
+}
+
+
+// ======================================================
+// 14. OBTENER FILTROS
+// ======================================================
+
+function filtrosActuales() {
+
+  return {
+
+    sala:
+      valorFiltro("filtroSala"),
+
+    marca:
+      valorFiltro("filtroMarca"),
+
+    serie:
+      valorFiltro("filtroSerie"),
+
+    juego:
+      valorFiltro("filtroJuego"),
+
+    mes:
+      valorFiltro("filtroMes"),
+
+    anio:
+      valorFiltro("filtroAnio"),
+
+    indicador:
+      valorFiltro("filtroIndicador") ||
+      "COIN"
+
+  };
+
+}
+
+
+function valorFiltro(id) {
+
+  return texto(
+    document.getElementById(id)?.value
+  );
+
+}
+
+
+// ======================================================
+// 15. APLICAR FILTROS
+// ======================================================
+
+function obtenerFiltrados() {
+
+  const f =
+    filtrosActuales();
+
+
+  return datos.filter(
+    r => {
+
+      if (
+        f.sala &&
+        texto(r.sala) !== f.sala
+      ) {
+
+        return false;
+
+      }
+
+
+      if (
+        f.marca &&
+        texto(r.marca) !== f.marca
+      ) {
+
+        return false;
+
+      }
+
+
+      if (
+        f.serie &&
+        texto(r.serie) !== f.serie
+      ) {
+
+        return false;
+
+      }
+
+
+      if (
+        f.juego &&
+        texto(r.juego) !== f.juego
+      ) {
+
+        return false;
+
+      }
+
+
+      if (
+        f.mes &&
+        texto(r.mes) !== f.mes
+      ) {
+
+        return false;
+
+      }
+
+
+      if (
+        f.anio &&
+        texto(r.anio) !== f.anio
+      ) {
+
+        return false;
+
+      }
+
+
+      return true;
+
+    }
+  );
+
+}
+
+
+// ======================================================
+// 16. MANEJAR FILTRO
+// ======================================================
+
+function manejarFiltro() {
 
   datosFiltrados =
-    datosOriginales.filter(
-      function (registro) {
+    obtenerFiltrados();
 
-        const sala =
-          String(
-            registro["SALAS"] || ""
-          )
-            .toLowerCase();
 
-        if (
-          texto &&
-          !sala.includes(texto)
-        ) {
-          return false;
-        }
+  actualizarDashboard();
 
-        if (
-          sector &&
-          registro["SECTOR"] !== sector
-        ) {
-          return false;
-        }
+}
 
-        if (
-          mes &&
-          registro[
-            "MES DE LA ULTIMA EMISIÓN RD"
-          ] !== mes
-        ) {
-          return false;
-        }
 
-        if (renovacion) {
+// ======================================================
+// 17. LLENAR FILTROS
+// ======================================================
 
-          const estado =
-            obtenerEstadoRenovacion(
-              registro[
-                "RENOVACIÓN PARA INDECI"
-              ]
-            );
+function llenarTodosLosFiltros() {
 
-          if (
-            estado.codigo !==
-            renovacion
-          ) {
-            return false;
-          }
+  llenarSelect(
+    "filtroSala",
+    "sala",
+    "Todas las salas"
+  );
 
-        }
 
-        return true;
+  llenarSelect(
+    "filtroMarca",
+    "marca",
+    "Todas las marcas"
+  );
+
+
+  llenarSelect(
+    "filtroSerie",
+    "serie",
+    "Todas las series"
+  );
+
+
+  llenarSelect(
+    "filtroJuego",
+    "juego",
+    "Todos los juegos"
+  );
+
+
+  llenarSelect(
+    "filtroAnio",
+    "anio",
+    "Todos los años"
+  );
+
+
+  const mes =
+    document.getElementById(
+      "filtroMes"
+    );
+
+
+  if (mes) {
+
+    mes.innerHTML =
+      `<option value="">
+        Todos los meses
+      </option>`;
+
+    MESES.forEach(
+      m => {
+
+        mes.innerHTML +=
+          `<option value="${m}">
+            ${m}
+          </option>`;
 
       }
     );
 
-  actualizarDashboard();
-
-}
-
-
-// ======================================================
-// LIMPIAR FILTROS
-// ======================================================
-
-function limpiarFiltros() {
-
-  const buscar =
-    document.getElementById(
-      "buscarSala"
-    );
-
-  const sector =
-    document.getElementById(
-      "filtroSector"
-    );
-
-  const mes =
-    document.getElementById(
-      "filtroMes"
-    );
-
-  const renovacion =
-    document.getElementById(
-      "filtroRenovacion"
-    );
-
-  if (buscar) buscar.value = "";
-
-  if (sector) sector.value = "";
-
-  if (mes) mes.value = "";
-
-  if (renovacion) renovacion.value = "";
-
-  datosFiltrados =
-    [...datosOriginales];
-
-  actualizarDashboard();
-
-}
-
-
-// ======================================================
-// ACTUALIZAR TODO
-// ======================================================
-
-function actualizarDashboard() {
-
-  actualizarKPI();
-
-  actualizarTabla();
-
-  actualizarGraficos();
-
-  actualizarMapa();
-
-  const contador =
-    document.getElementById(
-      "contadorResultados"
-    );
-
-  if (contador) {
-
-    contador.textContent =
-      datosFiltrados.length +
-      (
-        datosFiltrados.length === 1
-          ? " registro"
-          : " registros"
-      );
-
   }
 
 }
 
 
 // ======================================================
-// KPI
+// 18. SELECT
 // ======================================================
 
-function actualizarKPI() {
-
-  const total =
-    datosFiltrados.length;
-
-  const espacios =
-    sumarCampo(
-      datosFiltrados,
-      "ESPACIOS POR INDECI"
-    );
-
-  const rd =
-    sumarCampo(
-      datosFiltrados,
-      "RD MAQ."
-    );
-
-  const genex =
-    sumarCampo(
-      datosFiltrados,
-      "MAQUINAS GENEX"
-    );
-
-  const diferenciaIndeci =
-    sumarCampo(
-      datosFiltrados,
-      "INDECI VS RD"
-    );
-
-  const diferenciaGenex =
-    sumarCampo(
-      datosFiltrados,
-      "RD VS GENEX"
-    );
-
-  const kpiSalas =
-    document.getElementById(
-      "kpiSalas"
-    );
-
-  const kpiEspacios =
-    document.getElementById(
-      "kpiEspacios"
-    );
-
-  const kpiRD =
-    document.getElementById(
-      "kpiRD"
-    );
-
-  const kpiGenex =
-    document.getElementById(
-      "kpiGenex"
-    );
-
-  const kpiDiferencia =
-    document.getElementById(
-      "kpiDiferencia"
-    );
-
-  const kpiDiferenciaGenex =
-    document.getElementById(
-      "kpiDiferenciaGenex"
-    );
-
-  if (kpiSalas) {
-    kpiSalas.textContent =
-      formatearNumero(total);
-  }
-
-  if (kpiEspacios) {
-    kpiEspacios.textContent =
-      formatearNumero(espacios);
-  }
-
-  if (kpiRD) {
-    kpiRD.textContent =
-      formatearNumero(rd);
-  }
-
-  if (kpiGenex) {
-    kpiGenex.textContent =
-      formatearNumero(genex);
-  }
-
-  if (kpiDiferencia) {
-    kpiDiferencia.textContent =
-      formatearNumero(
-        diferenciaIndeci
-      );
-  }
-
-  if (kpiDiferenciaGenex) {
-    kpiDiferenciaGenex.textContent =
-      formatearNumero(
-        diferenciaGenex
-      );
-  }
-
-}
-
-
-// ======================================================
-// SUMAR CAMPO
-// ======================================================
-
-function sumarCampo(
-  datos,
-  campo
+function llenarSelect(
+  id,
+  campo,
+  inicial
 ) {
 
-  return datos.reduce(
-    function (
-      total,
-      registro
-    ) {
-
-      const valor =
-        Number(
-          registro[campo]
-        );
-
-      return total +
-        (
-          Number.isFinite(valor)
-            ? valor
-            : 0
-        );
-
-    },
-    0
-  );
-
-}
+  const select =
+    document.getElementById(id);
 
 
-// ======================================================
-// TABLA
-// ======================================================
-
-function actualizarTabla() {
-
-  const cuerpo =
-    document.getElementById(
-      "tablaCuerpo"
-    );
-
-  if (!cuerpo) return;
-
-  cuerpo.innerHTML = "";
-
-  if (
-    datosFiltrados.length === 0
-  ) {
-
-    cuerpo.innerHTML = `
-
-      <tr>
-
-        <td
-          colspan="11"
-          class="sin-datos">
-
-          No hay registros
-          con los filtros seleccionados.
-
-        </td>
-
-      </tr>
-
-    `;
+  if (!select) {
 
     return;
 
   }
 
-  datosFiltrados.forEach(
-    function (registro) {
 
-      const fila =
-        document.createElement(
-          "tr"
-        );
+  const anterior =
+    select.value;
 
-      const renovacion =
-        obtenerEstadoRenovacion(
-          registro[
-            "RENOVACIÓN PARA INDECI"
-          ]
-        );
 
-      fila.innerHTML = `
+  const valores =
+    [
+      ...new Set(
 
-        <td>
-          ${escaparHTML(
-            registro["SECTOR"]
-          )}
-        </td>
+        datos
 
-        <td>
-          <strong>
-            ${escaparHTML(
-              registro["SALAS"]
-            )}
-          </strong>
-        </td>
+          .map(
+            r => texto(
+              r[campo]
+            )
+          )
 
-        <td>
-          ${formatearNumero(
-            registro[
-              "ESPACIOS POR INDECI"
-            ]
-          )}
-        </td>
+          .filter(Boolean)
 
-        <td>
-          ${formatearNumero(
-            registro["RD MAQ."]
-          )}
-        </td>
+      )
+    ];
 
-        <td>
-          ${mostrarDiferencia(
-            registro[
-              "INDECI VS RD"
-            ]
-          )}
-        </td>
 
-        <td>
-          ${formatearNumero(
-            registro[
-              "MAQUINAS GENEX"
-            ]
-          )}
-        </td>
-
-        <td>
-          ${mostrarDiferencia(
-            registro[
-              "RD VS GENEX"
-            ]
-          )}
-        </td>
-
-        <td>
-          ${formatearNumero(
-            registro["AFORO"]
-          )}
-        </td>
-
-        <td>
-          ${formatearFecha(
-            registro[
-              "RENOVACIÓN PARA INDECI"
-            ]
-          )}
-        </td>
-
-        <td>
-          ${escaparHTML(
-            registro[
-              "MES DE LA ULTIMA EMISIÓN RD"
-            ]
-          )}
-        </td>
-
-        <td>
-
-          <span
-            class="estado ${renovacion.clase}">
-
-            ${renovacion.texto}
-
-          </span>
-
-        </td>
-
-      `;
-
-      fila.addEventListener(
-        "click",
-        function () {
-
-          abrirModal(
-            registro
-          );
-
+  valores.sort(
+    (a, b) =>
+      a.localeCompare(
+        b,
+        "es",
+        {
+          numeric: true
         }
-      );
+      )
+  );
 
-      cuerpo.appendChild(
-        fila
+
+  select.innerHTML =
+    `<option value="">
+      ${inicial}
+    </option>`;
+
+
+  valores.forEach(
+    v => {
+
+      const option =
+        document.createElement(
+          "option"
+        );
+
+      option.value =
+        v;
+
+      option.textContent =
+        v;
+
+      select.appendChild(
+        option
       );
 
     }
   );
 
-}
 
+  if (
+    valores.includes(
+      anterior
+    )
+  ) {
 
-// ======================================================
-// DIFERENCIA
-// ======================================================
-
-function mostrarDiferencia(valor) {
-
-  const numero =
-    Number(valor) || 0;
-
-  if (numero === 0) {
-
-    return `
-
-      <span class="diferencia-cero">
-        0
-      </span>
-
-    `;
+    select.value =
+      anterior;
 
   }
-
-  if (numero > 0) {
-
-    return `
-
-      <span class="diferencia-positiva">
-        +${formatearNumero(numero)}
-      </span>
-
-    `;
-
-  }
-
-  return `
-
-    <span class="diferencia-negativa">
-      ${formatearNumero(numero)}
-    </span>
-
-  `;
 
 }
 
 
 // ======================================================
-// ESTADO RENOVACIÓN
+// 19. FILTROS ENCADENADOS
 // ======================================================
 
-function obtenerEstadoRenovacion(
-  fecha
-) {
+function actualizarFiltrosEncadenados() {
 
-  if (!fecha) {
+  const f =
+    filtrosActuales();
 
-    return {
 
-      codigo: "VIGENTE",
+  const campos = {
 
-      texto: "SIN FECHA",
+    filtroSala: "sala",
 
-      clase: "vigente"
+    filtroMarca: "marca",
 
-    };
+    filtroSerie: "serie",
 
-  }
+    filtroJuego: "juego",
 
-  const fechaRenovacion =
-    convertirFecha(fecha);
+    filtroMes: "mes",
 
-  if (!fechaRenovacion) {
+    filtroAnio: "anio"
 
-    return {
+  };
 
-      codigo: "VIGENTE",
 
-      texto: "SIN FECHA",
+  Object.entries(campos)
+    .forEach(
+      ([id, campo]) => {
 
-      clase: "vigente"
+        const otros =
+          Object.entries(f)
+            .filter(
+              ([clave]) => {
 
-    };
+                const mapa = {
 
-  }
+                  sala: "filtroSala",
+                  marca: "filtroMarca",
+                  serie: "filtroSerie",
+                  juego: "filtroJuego",
+                  mes: "filtroMes",
+                  anio: "filtroAnio"
 
-  const hoy =
-    new Date();
+                };
 
-  hoy.setHours(
-    0,
-    0,
-    0,
-    0
-  );
+                return mapa[clave] !== id;
 
-  fechaRenovacion.setHours(
-    0,
-    0,
-    0,
-    0
-  );
+              }
+            )
+            .filter(
+              ([, valor]) =>
+                valor !== ""
+            );
 
-  const dias =
-    Math.ceil(
 
-      (
-        fechaRenovacion -
-        hoy
-      )
-      /
-      (
-        1000 *
-        60 *
-        60 *
-        24
-      )
+        let lista =
+          datos;
 
+
+        otros.forEach(
+          ([clave, valor]) => {
+
+            lista =
+              lista.filter(
+                r =>
+                  texto(
+                    r[clave]
+                  ) === valor
+              );
+
+          }
+        );
+
+
+        const valores =
+          [
+            ...new Set(
+
+              lista
+
+                .map(
+                  r =>
+                    texto(
+                      r[campo]
+                    )
+                )
+
+                .filter(Boolean)
+
+            )
+          ];
+
+
+        valores.sort(
+          (a, b) =>
+            a.localeCompare(
+              b,
+              "es",
+              {
+                numeric: true
+              }
+            )
+        );
+
+
+        const select =
+          document.getElementById(
+            id
+          );
+
+
+        const anterior =
+          select.value;
+
+
+        select.innerHTML =
+          `<option value="">
+            ${select.options[0]?.textContent || ""}
+          </option>`;
+
+
+        valores.forEach(
+          v => {
+
+            const op =
+              document.createElement(
+                "option"
+              );
+
+            op.value =
+              v;
+
+            op.textContent =
+              v;
+
+            select.appendChild(
+              op
+            );
+
+          }
+        );
+
+
+        if (
+          valores.includes(
+            anterior
+          )
+        ) {
+
+          select.value =
+            anterior;
+
+        }
+
+      }
     );
 
-  if (dias < 0) {
+}
 
-    return {
 
-      codigo: "VENCIDA",
+// ======================================================
+// 20. DASHBOARD
+// ======================================================
 
-      texto: "VENCIDA",
+function actualizarDashboard() {
 
-      clase: "vencida"
+  actualizarKPIs();
 
-    };
+  actualizarGraficos();
 
-  }
+  actualizarIndicador();
 
-  if (dias <= 90) {
+  actualizarMapa();
 
-    return {
+  actualizarTabla();
 
-      codigo: "PROXIMA",
+}
 
-      texto:
-        "PRÓXIMA (" +
-        dias +
-        " días)",
 
-      clase: "proxima"
+// ======================================================
+// 21. KPI
+// ======================================================
 
-    };
+function actualizarKPIs() {
 
-  }
+  let coin = 0;
+
+  let venta = 0;
+
+  let netwin = 0;
+
+  let pago = 0;
+
+
+  datosFiltrados.forEach(
+    r => {
+
+      coin +=
+        r.coin;
+
+      venta +=
+        r.venta;
+
+      netwin +=
+        r.netwin;
+
+      pago +=
+        r.pago;
+
+    }
+  );
+
+
+  const cantidad =
+    datosFiltrados.length;
+
+
+  pago =
+    cantidad
+      ? pago / cantidad
+      : 0;
+
+
+  poner(
+    "kpiCoin",
+    formato(coin)
+  );
+
+
+  poner(
+    "kpiVenta",
+    formato(venta)
+  );
+
+
+  poner(
+    "kpiNetwin",
+    formato(netwin)
+  );
+
+
+  poner(
+    "kpiPago",
+    pago.toFixed(2) + "%"
+  );
+
+
+  poner(
+    "kpiRegistros",
+    formatoEntero(cantidad)
+  );
+
+}
+
+
+// ======================================================
+// 22. ACTUALIZAR GRÁFICOS
+// ======================================================
+
+function actualizarGraficos() {
+
+  const indicador =
+    valorFiltro(
+      "filtroIndicador"
+    ) || "COIN";
+
+
+  const evolucion =
+    agrupar(
+      datosFiltrados,
+      "mes",
+      indicador
+    );
+
+
+  const salas =
+    ranking(
+      datosFiltrados,
+      "sala",
+      indicador,
+      12
+    );
+
+
+  const juegos =
+    ranking(
+      datosFiltrados,
+      "juego",
+      indicador,
+      12
+    );
+
+
+  const marcas =
+    ranking(
+      datosFiltrados,
+      "marca",
+      indicador,
+      12
+    );
+
+
+  crearOActualizarLinea(
+    "graficoEvolucion",
+    evolucion.labels,
+    evolucion.values,
+    "#2563eb",
+    indicador
+  );
+
+
+  crearOActualizarBarra(
+    "graficoSalas",
+    salas.labels,
+    salas.values,
+    "#b91c1c",
+    indicador
+  );
+
+
+  crearOActualizarBarra(
+    "graficoJuegos",
+    juegos.labels,
+    juegos.values,
+    "#059669",
+    indicador
+  );
+
+
+  crearOActualizarBarra(
+    "graficoMarcas",
+    marcas.labels,
+    marcas.values,
+    "#7c3aed",
+    indicador
+  );
+
+
+  poner(
+    "subtituloEvolucion",
+    indicador +
+    " por mes"
+  );
+
+}
+
+
+// ======================================================
+// 23. AGRUPAR
+// ======================================================
+
+function agrupar(
+  registros,
+  campo,
+  indicador
+) {
+
+  const mapa =
+    new Map();
+
+
+  registros.forEach(
+    r => {
+
+      const clave =
+        r[campo] || "SIN DATO";
+
+
+      const valor =
+        valorIndicador(
+          r,
+          indicador
+        );
+
+
+      if (
+        !mapa.has(clave)
+      ) {
+
+        mapa.set(
+          clave,
+          []
+        );
+
+      }
+
+
+      mapa
+        .get(clave)
+        .push(valor);
+
+    }
+  );
+
+
+  let labels =
+    Array.from(
+      mapa.keys()
+    );
+
+
+  labels.sort(
+    (a, b) => {
+
+      return MESES.indexOf(a) -
+        MESES.indexOf(b);
+
+    }
+  );
+
 
   return {
 
-    codigo: "VIGENTE",
+    labels,
 
-    texto: "VIGENTE",
-
-    clase: "vigente"
+    values:
+      labels.map(
+        mes =>
+          calcular(
+            mapa.get(mes),
+            indicador
+          )
+      )
 
   };
 
@@ -1098,887 +1311,287 @@ function obtenerEstadoRenovacion(
 
 
 // ======================================================
-// MAPA
+// 24. RANKING
 // ======================================================
 
-function obtenerUbicacionSala(
-  nombre
+function ranking(
+  registros,
+  campo,
+  indicador,
+  limite
 ) {
 
-  if (!nombre) return null;
+  const mapa =
+    new Map();
 
-  let sala =
-    String(nombre)
-      .toUpperCase()
-      .trim();
 
-  sala =
-    sala.replace(
-      /\s+/g,
-      " "
-    );
-
-  sala =
-    sala.replace(
-      /\s*\(.*?\)\s*/g,
-      ""
-    )
-    .trim();
-
-  if (
-    UBICACIONES_SALAS[sala]
-  ) {
-
-    return {
-
-      centro:
-        UBICACIONES_SALAS[sala],
-
-      ciudad:
-        sala
-
-    };
-
-  }
-
-  const claves =
-    Object.keys(
-      UBICACIONES_SALAS
-    );
-
-  for (
-    let i = 0;
-    i < claves.length;
-    i++
-  ) {
-
-    const clave =
-      claves[i];
-
-    if (
-      sala === clave ||
-      sala.startsWith(
-        clave + " "
-      )
-    ) {
-
-      return {
-
-        centro:
-          UBICACIONES_SALAS[clave],
-
-        ciudad:
-          clave
-
-      };
-
-    }
-
-  }
-
-  return null;
-
-}
-
-
-// ======================================================
-// GENERAR SEPARACIÓN DE PUNTOS
-// ======================================================
-
-function calcularPosicionMarcador(
-  centro,
-  indice,
-  total
-) {
-
-  if (
-    !centro ||
-    total <= 1
-  ) {
-
-    return [
-      centro[0],
-      centro[1]
-    ];
-
-  }
-
-  const radio =
-    0.006;
-
-  const angulo =
-    (
-      2 *
-      Math.PI *
-      indice
-    )
-    /
-    total;
-
-  const lat =
-    centro[0] +
-    Math.cos(
-      angulo
-    ) *
-    radio;
-
-  const lng =
-    centro[1] +
-    Math.sin(
-      angulo
-    ) *
-    radio
-    /
-    Math.cos(
-      centro[0] *
-      Math.PI /
-      180
-    );
-
-  return [
-    lat,
-    lng
-  ];
-
-}
-
-
-// ======================================================
-// CREAR ICONO DEL MARCADOR
-// ======================================================
-
-function crearIconoSala(
-  estado
-) {
-
-  let color =
-    "#16803c";
-
-  if (
-    estado.codigo ===
-    "VENCIDA"
-  ) {
-
-    color =
-      "#c62828";
-
-  }
-
-  else if (
-    estado.codigo ===
-    "PROXIMA"
-  ) {
-
-    color =
-      "#f59e0b";
-
-  }
-
-  return L.divIcon({
-
-    className:
-      "icono-marcador-sala",
-
-    html: `
-
-      <div
-        style="
-          width:18px;
-          height:18px;
-          background:${color};
-          border:3px solid white;
-          border-radius:50%;
-          box-shadow:0 2px 8px rgba(0,0,0,.45);
-        ">
-      </div>
-
-    `,
-
-    iconSize: [
-      18,
-      18
-    ],
-
-    iconAnchor: [
-      9,
-      9
-    ],
-
-    popupAnchor: [
-      0,
-      -10
-    ]
-
-  });
-
-}
-
-
-// ======================================================
-// ACTUALIZAR MAPA
-// ======================================================
-
-function actualizarMapa() {
-
-  if (!mapaPeru) return;
-
-  marcadoresMapa.forEach(
-    function (marcador) {
-
-      mapaPeru.removeLayer(
-        marcador
-      );
-
-    }
-  );
-
-  marcadoresMapa = [];
-
-  const grupos = {};
-
-  datosFiltrados.forEach(
-    function (registro) {
-
-      const nombre =
-        String(
-          registro["SALAS"] || ""
-        ).trim();
-
-      const ubicacion =
-        obtenerUbicacionSala(
-          nombre
-        );
-
-      if (!ubicacion) return;
+  registros.forEach(
+    r => {
 
       const clave =
-        ubicacion.ciudad;
+        r[campo] || "SIN DATO";
 
-      if (!grupos[clave]) {
-        grupos[clave] = [];
+
+      const valor =
+        valorIndicador(
+          r,
+          indicador
+        );
+
+
+      if (
+        !mapa.has(clave)
+      ) {
+
+        mapa.set(
+          clave,
+          []
+        );
+
       }
 
-      grupos[clave].push({
 
-        registro:
-          registro,
-
-        ubicacion:
-          ubicacion
-
-      });
+      mapa
+        .get(clave)
+        .push(valor);
 
     }
   );
 
-  let cantidadMapa = 0;
 
-  Object.keys(
-    grupos
-  ).forEach(
-    function (ciudad) {
+  const resultado =
+    Array.from(
+      mapa.entries()
+    )
+    .map(
+      ([nombre, valores]) => {
 
-      const grupo =
-        grupos[ciudad];
+        return {
 
-      grupo.forEach(
-        function (
-          item,
-          indice
-        ) {
+          nombre,
 
-          const registro =
-            item.registro;
-
-          const centro =
-            item.ubicacion.centro;
-
-          const posicion =
-            calcularPosicionMarcador(
-              centro,
-              indice,
-              grupo.length
-            );
-
-          const estado =
-            obtenerEstadoRenovacion(
-              registro[
-                "RENOVACIÓN PARA INDECI"
-              ]
-            );
-
-          const marcador =
-            L.marker(
-              posicion,
-              {
-                icon:
-                  crearIconoSala(
-                    estado
-                  )
-              }
-            );
-
-          const nombre =
-            registro["SALAS"] ||
-            "Sin nombre";
-
-          const sector =
-            registro["SECTOR"] ||
-            "—";
-
-          const espacios =
-            registro[
-              "ESPACIOS POR INDECI"
-            ];
-
-          const rd =
-            registro["RD MAQ."];
-
-          const genex =
-            registro[
-              "MAQUINAS GENEX"
-            ];
-
-          const aforo =
-            registro["AFORO"];
-
-          const renovacion =
-            formatearFecha(
-              registro[
-                "RENOVACIÓN PARA INDECI"
-              ]
-            );
-
-          let colorEstado =
-            "#16803c";
-
-          if (
-            estado.codigo ===
-            "VENCIDA"
-          ) {
-
-            colorEstado =
-              "#c62828";
-
-          }
-
-          else if (
-            estado.codigo ===
-            "PROXIMA"
-          ) {
-
-            colorEstado =
-              "#f59e0b";
-
-          }
-
-          const popup = `
-
-            <div
-              class="popup-sala"
-              style="
-                min-width:220px;
-                font-family:Arial,Helvetica,sans-serif;
-              ">
-
-              <h3
-                style="
-                  margin:0 0 8px;
-                  color:#b11226;
-                  font-size:16px;
-                ">
-
-                ${escaparHTML(
-                  String(nombre)
-                )}
-
-              </h3>
-
-              <p>
-                <strong>Sector:</strong>
-                ${escaparHTML(
-                  String(sector)
-                )}
-              </p>
-
-              <p>
-
-                <strong>Estado:</strong>
-
-                <span
-                  style="
-                    color:${colorEstado};
-                    font-weight:bold;
-                  ">
-
-                  ${escaparHTML(
-                    estado.texto
-                  )}
-
-                </span>
-
-              </p>
-
-              <p>
-
-                <strong>
-                  Renovación:
-                </strong>
-
-                ${escaparHTML(
-                  renovacion
-                )}
-
-              </p>
-
-              <hr
-                style="
-                  border:0;
-                  border-top:1px solid #eee;
-                  margin:8px 0;
-                "
-              >
-
-              <p>
-
-                <strong>
-                  Espacios INDECI:
-                </strong>
-
-                ${formatearNumero(
-                  espacios
-                )}
-
-              </p>
-
-              <p>
-
-                <strong>
-                  RD Máquinas:
-                </strong>
-
-                ${formatearNumero(
-                  rd
-                )}
-
-              </p>
-
-              <p>
-
-                <strong>
-                  GENEX:
-                </strong>
-
-                ${formatearNumero(
-                  genex
-                )}
-
-              </p>
-
-              <p>
-
-                <strong>
-                  Aforo:
-                </strong>
-
-                ${formatearNumero(
-                  aforo
-                )}
-
-              </p>
-
-            </div>
-
-          `;
-
-          marcador
-            .bindPopup(
-              popup
+          valor:
+            calcular(
+              valores,
+              indicador
             )
-            .addTo(
-              mapaPeru
-            );
 
-          marcador.on(
-            "dblclick",
-            function () {
+        };
 
-              abrirModal(
-                registro
-              );
-
-            }
-          );
-
-          marcadoresMapa.push(
-            marcador
-          );
-
-          cantidadMapa++;
-
-        }
-      );
-
-    }
-  );
-
-  const contador =
-    document.getElementById(
-      "salasMapa"
+      }
+    )
+    .sort(
+      (a, b) =>
+        b.valor - a.valor
+    )
+    .slice(
+      0,
+      limite
     );
 
-  if (contador) {
-    contador.textContent =
-      cantidadMapa;
+
+  return {
+
+    labels:
+      resultado.map(
+        x => abreviar(
+          x.nombre,
+          16
+        )
+      ),
+
+    nombres:
+      resultado.map(
+        x => x.nombre
+      ),
+
+    values:
+      resultado.map(
+        x => x.valor
+      )
+
+  };
+
+}
+
+
+// ======================================================
+// 25. OBTENER INDICADOR
+// ======================================================
+
+function valorIndicador(
+  r,
+  indicador
+) {
+
+  switch (indicador) {
+
+    case "COIN":
+      return r.coin;
+
+    case "COIN PROM":
+      return r.coinProm;
+
+    case "VENTA":
+      return r.venta;
+
+    case "VENTA PROM":
+      return r.ventaProm;
+
+    case "NETWIN ($)":
+      return r.netwin;
+
+    case "T.C":
+      return r.tc;
+
+    case "% PAGO":
+      return r.pago;
+
+    default:
+      return r.coin;
+
   }
+
+}
+
+
+// ======================================================
+// 26. CALCULAR
+// ======================================================
+
+function calcular(
+  valores,
+  indicador
+) {
 
   if (
-    marcadoresMapa.length > 0
+    !valores ||
+    !valores.length
   ) {
 
-    const grupo =
-      L.featureGroup(
-        marcadoresMapa
-      );
-
-    mapaPeru.fitBounds(
-      grupo.getBounds(),
-      {
-        padding: [
-          40,
-          40
-        ],
-        maxZoom: 12
-      }
-    );
+    return 0;
 
   }
 
-}
+
+  const config =
+    CONFIG_INDICADORES[
+      indicador
+    ];
 
 
-// ======================================================
-// GRÁFICOS
-// ======================================================
+  if (
+    config?.tipo ===
+    "promedio"
+  ) {
 
-function actualizarGraficos() {
+    return valores.reduce(
+      (a, b) => a + b,
+      0
+    ) / valores.length;
 
-  crearGraficoIndeciRD();
-
-  crearGraficoRDGenex();
-
-  crearGraficoSectores();
-
-  crearGraficoRenovaciones();
-
-}
-
-
-// ======================================================
-// GRÁFICO INDECI VS RD
-// ======================================================
-
-function crearGraficoIndeciRD() {
-
-  const ctx =
-    document.getElementById(
-      "graficoIndeciRD"
-    );
-
-  if (!ctx) return;
-
-  if (graficoIndeciRD) {
-    graficoIndeciRD.destroy();
   }
 
-  const totalIndeci =
-    sumarCampo(
-      datosFiltrados,
-      "ESPACIOS POR INDECI"
-    );
 
-  const totalRD =
-    sumarCampo(
-      datosFiltrados,
-      "RD MAQ."
-    );
-
-  graficoIndeciRD =
-    new Chart(
-      ctx,
-      {
-
-        type: "bar",
-
-        data: {
-
-          labels: [
-            "INDECI",
-            "RD MAQ."
-          ],
-
-          datasets: [{
-
-            data: [
-              totalIndeci,
-              totalRD
-            ],
-
-            backgroundColor: [
-              "#B72EB1",
-              "#2E86DE"
-            ],
-
-            borderColor: [
-              "#B72EB1",
-              "#2E86DE"
-            ],
-
-            borderWidth: 1,
-
-            borderRadius: 6
-
-          }]
-
-        },
-
-        options: {
-
-          responsive: true,
-
-          maintainAspectRatio: false,
-
-          plugins: {
-
-            legend: {
-              display: false
-            }
-
-          },
-
-          scales: {
-
-            y: {
-              beginAtZero: true
-            }
-
-          }
-
-        }
-
-      }
-    );
-
-}
-
-
-// ======================================================
-// GRÁFICO RD VS GENEX
-// ======================================================
-
-function crearGraficoRDGenex() {
-
-  const ctx =
-    document.getElementById(
-      "graficoRDGenex"
-    );
-
-  if (!ctx) return;
-
-  if (graficoRDGenex) {
-    graficoRDGenex.destroy();
-  }
-
-  const rd =
-    sumarCampo(
-      datosFiltrados,
-      "RD MAQ."
-    );
-
-  const genex =
-    sumarCampo(
-      datosFiltrados,
-      "MAQUINAS GENEX"
-    );
-
-  graficoRDGenex =
-    new Chart(
-      ctx,
-      {
-
-        type: "bar",
-
-        data: {
-
-          labels: [
-            "RD MAQ.",
-            "GENEX"
-          ],
-
-          datasets: [{
-
-            data: [
-              rd,
-              genex
-            ],
-
-            backgroundColor: [
-              "#2E86DE",
-              "#00A884"
-            ],
-
-            borderColor: [
-              "#2E86DE",
-              "#00A884"
-            ],
-
-            borderWidth: 1,
-
-            borderRadius: 6
-
-          }]
-
-        },
-
-        options: {
-
-          responsive: true,
-
-          maintainAspectRatio: false,
-
-          plugins: {
-
-            legend: {
-              display: false
-            }
-
-          },
-
-          scales: {
-
-            y: {
-              beginAtZero: true
-            }
-
-          }
-
-        }
-
-      }
-    );
-
-}
-
-
-// ======================================================
-// GRÁFICO SECTORES
-// ======================================================
-
-function crearGraficoSectores() {
-
-  const ctx =
-    document.getElementById(
-      "graficoSectores"
-    );
-
-  if (!ctx) return;
-
-  if (graficoSectores) {
-    graficoSectores.destroy();
-  }
-
-  const sectores = {};
-
-  datosFiltrados.forEach(
-    function (registro) {
-
-      const sector =
-        String(
-          registro["SECTOR"] ||
-          "SIN SECTOR"
-        ).trim();
-
-      sectores[sector] =
-        (
-          sectores[sector] ||
-          0
-        ) + 1;
-
-    }
+  return valores.reduce(
+    (a, b) => a + b,
+    0
   );
 
-  const ordenados =
-    Object.entries(
-      sectores
-    )
-      .sort(
-        function (a, b) {
-
-          return b[1] - a[1];
-
-        }
-      );
+}
 
 
-  // ====================================================
-  // AQUÍ SE GENERA UN COLOR DIFERENTE PARA CADA BARRA
-  // ====================================================
+// ======================================================
+// 27. GRÁFICO DE LÍNEA
+// ======================================================
 
-  const coloresBarras =
-    ordenados.map(
-      function (item, indice) {
+function crearOActualizarLinea(
+  id,
+  labels,
+  values,
+  color,
+  indicador
+) {
 
-        return coloresSectores[
-          indice %
-          coloresSectores.length
-        ];
+  const canvas =
+    document.getElementById(id);
 
-      }
+
+  if (!canvas) {
+
+    return;
+
+  }
+
+
+  if (
+    graficos[id]
+  ) {
+
+    graficos[id].data.labels =
+      labels;
+
+    graficos[id]
+      .data
+      .datasets[0]
+      .data =
+      values;
+
+    graficos[id]
+      .data
+      .datasets[0]
+      .label =
+      indicador;
+
+    graficos[id].update(
+      "none"
     );
 
+    return;
 
-  graficoSectores =
+  }
+
+
+  graficos[id] =
     new Chart(
-      ctx,
+      canvas,
       {
 
-        type: "bar",
+        type:
+          "line",
 
         data: {
 
-          labels:
-            ordenados.map(
-              function (item) {
-
-                return item[0];
-
-              }
-            ),
+          labels,
 
           datasets: [{
 
-            label: "Salas",
+            label:
+              indicador,
 
             data:
-              ordenados.map(
-                function (item) {
-
-                  return item[1];
-
-                }
-              ),
-
-            backgroundColor:
-              coloresBarras,
+              values,
 
             borderColor:
-              coloresBarras,
+              color,
 
-            borderWidth: 1,
+            backgroundColor:
+              color,
 
-            borderRadius: 6,
+            borderWidth:
+              2.5,
 
-            borderSkipped: false
+            pointRadius:
+              3,
+
+            pointHoverRadius:
+              6,
+
+            tension:
+              .25,
+
+            fill:
+              false
 
           }]
 
@@ -1986,17 +1599,31 @@ function crearGraficoSectores() {
 
         options: {
 
-          indexAxis: "y",
+          responsive:
+            true,
 
-          responsive: true,
+          maintainAspectRatio:
+            false,
 
-          maintainAspectRatio: false,
+          animation:
+            false,
+
+          interaction: {
+
+            mode:
+              "index",
+
+            intersect:
+              false
+
+          },
 
           plugins: {
 
             legend: {
 
-              display: false
+              display:
+                true
 
             },
 
@@ -2005,19 +1632,13 @@ function crearGraficoSectores() {
               callbacks: {
 
                 label:
-                  function (context) {
-
-                    return (
-                      " " +
-                      context.raw +
-                      (
-                        context.raw === 1
-                          ? " sala"
-                          : " salas"
-                      )
-                    );
-
-                  }
+                  context =>
+                    " " +
+                    indicador +
+                    ": " +
+                    formato(
+                      context.raw
+                    )
 
               }
 
@@ -2029,11 +1650,10 @@ function crearGraficoSectores() {
 
             x: {
 
-              beginAtZero: true,
+              grid: {
 
-              ticks: {
-
-                precision: 0
+                display:
+                  false
 
               }
 
@@ -2041,9 +1661,23 @@ function crearGraficoSectores() {
 
             y: {
 
+              beginAtZero:
+                false,
+
+              grid: {
+
+                color:
+                  "#eef2f6"
+
+              },
+
               ticks: {
 
-                autoSkip: false
+                callback:
+                  valor =>
+                    abreviarNumero(
+                      valor
+                    )
 
               }
 
@@ -2060,99 +1694,85 @@ function crearGraficoSectores() {
 
 
 // ======================================================
-// GRÁFICO RENOVACIONES
+// 28. GRÁFICO DE BARRAS
 // ======================================================
 
-function crearGraficoRenovaciones() {
+function crearOActualizarBarra(
+  id,
+  labels,
+  values,
+  color,
+  indicador
+) {
 
-  const ctx =
-    document.getElementById(
-      "graficoRenovaciones"
-    );
+  const canvas =
+    document.getElementById(id);
 
-  if (!ctx) return;
 
-  if (graficoRenovaciones) {
-    graficoRenovaciones.destroy();
+  if (!canvas) {
+
+    return;
+
   }
 
-  let vencidas = 0;
-  let proximas = 0;
-  let vigentes = 0;
 
-  datosFiltrados.forEach(
-    function (registro) {
+  if (
+    graficos[id]
+  ) {
 
-      const estado =
-        obtenerEstadoRenovacion(
-          registro[
-            "RENOVACIÓN PARA INDECI"
-          ]
-        );
+    graficos[id]
+      .data.labels =
+      labels;
 
-      if (
-        estado.codigo ===
-        "VENCIDA"
-      ) {
+    graficos[id]
+      .data
+      .datasets[0]
+      .data =
+      values;
 
-        vencidas++;
+    graficos[id]
+      .data
+      .datasets[0]
+      .label =
+      indicador;
 
-      }
+    graficos[id].update(
+      "none"
+    );
 
-      else if (
-        estado.codigo ===
-        "PROXIMA"
-      ) {
+    return;
 
-        proximas++;
+  }
 
-      }
 
-      else {
-
-        vigentes++;
-
-      }
-
-    }
-  );
-
-  graficoRenovaciones =
+  graficos[id] =
     new Chart(
-      ctx,
+      canvas,
       {
 
-        type: "doughnut",
+        type:
+          "bar",
 
         data: {
 
-          labels: [
-            "Vigentes",
-            "Próximas",
-            "Vencidas"
-          ],
+          labels,
 
           datasets: [{
 
-            data: [
-              vigentes,
-              proximas,
-              vencidas
-            ],
+            label:
+              indicador,
 
-            backgroundColor: [
-              "#21C55D",
-              "#F59E0B",
-              "#DC2626"
-            ],
+            data:
+              values,
 
-            borderColor: [
-              "#ffffff",
-              "#ffffff",
-              "#ffffff"
-            ],
+            backgroundColor:
+              color,
 
-            borderWidth: 2
+            borderRadius:
+              5,
+
+            borderSkipped:
+              false
 
           }]
 
@@ -2160,16 +1780,105 @@ function crearGraficoRenovaciones() {
 
         options: {
 
-          responsive: true,
+          responsive:
+            true,
 
-          maintainAspectRatio: false,
+          maintainAspectRatio:
+            false,
+
+          animation:
+            false,
 
           plugins: {
 
             legend: {
 
-              position:
-                "bottom"
+              display:
+                false
+
+            },
+
+            tooltip: {
+
+              callbacks: {
+
+                title:
+                  context => {
+
+                    return context[0]
+                      ?.label || "";
+
+                  },
+
+                label:
+                  context =>
+                    " " +
+                    indicador +
+                    ": " +
+                    formato(
+                      context.raw
+                    )
+
+              }
+
+            }
+
+          },
+
+          scales: {
+
+            x: {
+
+              grid: {
+
+                display:
+                  false
+
+              },
+
+              ticks: {
+
+                maxRotation:
+                  0,
+
+                minRotation:
+                  0,
+
+                autoSkip:
+                  true,
+
+                font: {
+
+                  size:
+                    9
+
+                }
+
+              }
+
+            },
+
+            y: {
+
+              beginAtZero:
+                true,
+
+              grid: {
+
+                color:
+                  "#eef2f6"
+
+              },
+
+              ticks: {
+
+                callback:
+                  valor =>
+                    abreviarNumero(
+                      valor
+                    )
+
+              }
 
             }
 
@@ -2184,453 +1893,474 @@ function crearGraficoRenovaciones() {
 
 
 // ======================================================
-// MODAL
+// 29. INDICADOR GRANDE
 // ======================================================
 
-function abrirModal(
-  registro
-) {
+function actualizarIndicador() {
 
-  const modal =
-    document.getElementById(
-      "modalDetalle"
+  const indicador =
+    valorFiltro(
+      "filtroIndicador"
+    ) || "COIN";
+
+
+  const valores =
+    datosFiltrados.map(
+      r =>
+        valorIndicador(
+          r,
+          indicador
+        )
     );
 
-  const titulo =
-    document.getElementById(
-      "modalTitulo"
+
+  const valor =
+    calcular(
+      valores,
+      indicador
     );
 
-  const contenido =
-    document.getElementById(
-      "modalDatos"
+
+  poner(
+    "nombreIndicador",
+    indicador
+  );
+
+
+  poner(
+    "valorIndicador",
+    indicador === "% PAGO"
+      ? valor.toFixed(2) + "%"
+      : formato(valor)
+  );
+
+}
+
+
+// ======================================================
+// 30. MAPA
+// ======================================================
+
+function actualizarMapa() {
+
+  const salas =
+    new Set(
+      datosFiltrados.map(
+        r =>
+          texto(
+            r.sala
+          )
+      )
     );
 
-  if (
-    !modal ||
-    !titulo ||
-    !contenido
-  ) {
-    return;
-  }
 
-  titulo.textContent =
-    registro["SALAS"] ||
-    "Detalle de sala";
+  const ciudades = {
 
-  contenido.innerHTML = "";
+    "LIMA":
+      "puntoLima",
 
-  const campos = [
+    "TRUJILLO":
+      "puntoTrujillo",
 
-    [
-      "SECTOR",
-      "Sector"
-    ],
+    "CHICLAYO":
+      "puntoChiclayo",
 
-    [
-      "SALAS",
-      "Sala"
-    ],
+    "CHINCHA":
+      "puntoChincha",
 
-    [
-      "RENOVACIÓN PARA INDECI",
-      "Renovación INDECI"
-    ],
+    "PUCALLPA":
+      "puntoPucallpa"
 
-    [
-      "ESPACIOS POR INDECI",
-      "Espacios INDECI"
-    ],
+  };
 
-    [
-      "RD MAQ.",
-      "RD Máquinas"
-    ],
 
-    [
-      "RD MEMORIAS",
-      "RD Memorias"
-    ],
+  Object.entries(
+    ciudades
+  )
+  .forEach(
+    ([ciudad, id]) => {
 
-    [
-      "INDECI VS RD",
-      "INDECI vs RD"
-    ],
-
-    [
-      "MAQUINAS GENEX",
-      "Máquinas GENEX"
-    ],
-
-    [
-      "RD VS GENEX",
-      "RD vs GENEX"
-    ],
-
-    [
-      "AFORO",
-      "Aforo"
-    ],
-
-    [
-      "MES DE LA ULTIMA EMISIÓN RD",
-      "Última emisión RD"
-    ],
-
-    [
-      "OBSERVACIONES",
-      "Observaciones"
-    ]
-
-  ];
-
-  campos.forEach(
-    function (campo) {
-
-      const valor =
-        registro[
-          campo[0]
-        ];
-
-      const item =
-        document.createElement(
-          "div"
+      const punto =
+        document.getElementById(
+          id
         );
 
-      item.className =
-        "modal-item";
 
-      let valorMostrar =
-        valor;
+      if (!punto) {
 
-      if (
-        campo[0] ===
-        "RENOVACIÓN PARA INDECI"
-      ) {
-
-        valorMostrar =
-          formatearFecha(
-            valor
-          );
+        return;
 
       }
 
-      if (
-        valorMostrar === null ||
-        valorMostrar === undefined ||
-        valorMostrar === ""
-      ) {
 
-        valorMostrar =
-          "—";
-
-      }
-
-      item.innerHTML = `
-
-        <strong>
-          ${campo[1]}
-        </strong>
-
-        <span>
-          ${escaparHTML(
-            String(
-              valorMostrar
+      const visible =
+        Array.from(
+          salas
+        )
+        .some(
+          sala =>
+            sala.includes(
+              ciudad
             )
-          )}
-        </span>
+        );
 
-      `;
 
-      contenido.appendChild(
-        item
-      );
+      punto.style.opacity =
+        visible
+          ? "1"
+          : ".18";
 
     }
-  );
-
-  modal.classList.add(
-    "activo"
   );
 
 }
 
 
 // ======================================================
-// CERRAR MODAL
+// 31. TABLA
 // ======================================================
 
-function cerrarModal() {
+function actualizarTabla() {
 
-  const modal =
+  const cuerpo =
     document.getElementById(
-      "modalDetalle"
+      "tablaCuerpo"
     );
 
-  if (!modal) return;
 
-  modal.classList.remove(
-    "activo"
+  if (!cuerpo) {
+
+    return;
+
+  }
+
+
+  /*
+    Para evitar que 61,000 filas
+    hagan pesada la página,
+    mostramos máximo 500 filas.
+  */
+
+  const MAX_FILAS =
+    500;
+
+
+  const fragmento =
+    document.createDocumentFragment();
+
+
+  const limite =
+    Math.min(
+      datosFiltrados.length,
+      MAX_FILAS
+    );
+
+
+  for (
+    let i = 0;
+    i < limite;
+    i++
+  ) {
+
+    const r =
+      datosFiltrados[i];
+
+
+    const tr =
+      document.createElement(
+        "tr"
+      );
+
+
+    tr.innerHTML = `
+
+      <td>${escapar(r.marca)}</td>
+
+      <td>${escapar(r.serie)}</td>
+
+      <td>${escapar(r.juego)}</td>
+
+      <td>${formato(r.coin)}</td>
+
+      <td>${formato(r.coinProm)}</td>
+
+      <td>${formato(r.venta)}</td>
+
+      <td>${formato(r.ventaProm)}</td>
+
+      <td>${formato(r.netwin)}</td>
+
+      <td>${formato(r.gplayed)}</td>
+
+      <td>${r.pago.toFixed(2)}%</td>
+
+      <td>${escapar(r.sala)}</td>
+
+      <td>${escapar(r.mes)}</td>
+
+      <td>${escapar(r.anio)}</td>
+
+      <td>${r.tc.toFixed(2)}</td>
+
+    `;
+
+
+    fragmento.appendChild(
+      tr
+    );
+
+  }
+
+
+  cuerpo.innerHTML = "";
+
+  cuerpo.appendChild(
+    fragmento
   );
 
 }
 
 
-document.addEventListener(
-  "click",
-  function (event) {
+// ======================================================
+// 32. LIMPIAR
+// ======================================================
 
-    const modal =
-      document.getElementById(
-        "modalDetalle"
-      );
+function limpiarFiltros() {
 
-    if (
-      modal &&
-      event.target === modal
-    ) {
+  [
 
-      cerrarModal();
+    "filtroSala",
+    "filtroMarca",
+    "filtroSerie",
+    "filtroJuego",
+    "filtroMes",
+    "filtroAnio"
+
+  ].forEach(
+    id => {
+
+      const elemento =
+        document.getElementById(
+          id
+        );
+
+      if (elemento) {
+
+        elemento.value =
+          "";
+
+      }
 
     }
+  );
 
-  }
-);
+
+  document.getElementById(
+    "filtroIndicador"
+  ).value =
+    "COIN";
+
+
+  datosFiltrados =
+    datos;
+
+
+  actualizarDashboard();
+
+}
 
 
 // ======================================================
-// FORMATEAR FECHA
+// 33. ABREVIAR NOMBRES DEL EJE X
 // ======================================================
 
-function formatearFecha(
-  valor
+function abreviar(
+  valor,
+  maximo
 ) {
 
-  const fecha =
-    convertirFecha(
-      valor
+  const t =
+    String(
+      valor || ""
     );
 
-  if (!fecha) {
-    return "—";
+
+  if (
+    t.length <= maximo
+  ) {
+
+    return t;
+
   }
 
-  return fecha.toLocaleDateString(
-    "es-PE",
-    {
 
-      day: "2-digit",
-
-      month: "2-digit",
-
-      year: "numeric"
-
-    }
+  return (
+    t.substring(
+      0,
+      maximo - 3
+    ) +
+    "..."
   );
 
 }
 
 
 // ======================================================
-// CONVERTIR FECHA
+// 34. ABREVIAR NÚMEROS
 // ======================================================
 
-function convertirFecha(
+function abreviarNumero(
   valor
 ) {
 
-  if (!valor) {
-    return null;
-  }
-
-  if (
-    valor instanceof Date
-  ) {
-
-    return isNaN(
-      valor.getTime()
-    )
-      ? null
-      : valor;
-
-  }
-
-  const texto =
-    String(valor)
-      .trim();
-
-  if (!texto) {
-    return null;
-  }
-
-  let coincidencia =
-    texto.match(
-      /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/
-    );
-
-  if (coincidencia) {
-
-    const dia =
-      Number(
-        coincidencia[1]
-      );
-
-    const mes =
-      Number(
-        coincidencia[2]
-      ) - 1;
-
-    const año =
-      Number(
-        coincidencia[3]
-      );
-
-    const fecha =
-      new Date(
-        año,
-        mes,
-        dia
-      );
-
-    return isNaN(
-      fecha.getTime()
-    )
-      ? null
-      : fecha;
-
-  }
-
-  coincidencia =
-    texto.match(
-      /^(\d{4})-(\d{1,2})-(\d{1,2})/
-    );
-
-  if (coincidencia) {
-
-    const año =
-      Number(
-        coincidencia[1]
-      );
-
-    const mes =
-      Number(
-        coincidencia[2]
-      ) - 1;
-
-    const dia =
-      Number(
-        coincidencia[3]
-      );
-
-    const fecha =
-      new Date(
-        año,
-        mes,
-        dia
-      );
-
-    return isNaN(
-      fecha.getTime()
-    )
-      ? null
-      : fecha;
-
-  }
-
-  const fecha =
-    new Date(
-      texto
-    );
-
-  if (
-    !isNaN(
-      fecha.getTime()
-    )
-  ) {
-
-    return fecha;
-
-  }
-
-  return null;
-
-}
-
-
-// ======================================================
-// FORMATO NÚMERO
-// ======================================================
-
-function formatearNumero(
-  valor
-) {
-
-  const numero =
+  const n =
     Number(valor) || 0;
 
-  return numero.toLocaleString(
-    "es-PE"
+
+  if (
+    Math.abs(n) >= 1000000
+  ) {
+
+    return (
+      (n / 1000000)
+        .toFixed(1)
+      +
+      " M"
+    );
+
+  }
+
+
+  if (
+    Math.abs(n) >= 1000
+  ) {
+
+    return (
+      (n / 1000)
+        .toFixed(1)
+      +
+      " K"
+    );
+
+  }
+
+
+  return n.toLocaleString(
+    "es-PE",
+    {
+      maximumFractionDigits:
+        1
+    }
   );
 
 }
 
 
 // ======================================================
-// ESCAPAR HTML
+// 35. FORMATO
 // ======================================================
 
-function escaparHTML(
+function formato(
   valor
 ) {
 
-  if (
-    valor === null ||
-    valor === undefined
-  ) {
+  return Number(
+    valor || 0
+  )
+  .toLocaleString(
+    "es-PE",
+    {
+      maximumFractionDigits:
+        2
+    }
+  );
 
-    return "";
+}
 
-  }
 
-  return String(valor)
+function formatoEntero(
+  valor
+) {
 
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-
-    .replace(
-      /</g,
-      "&lt;"
-    )
-
-    .replace(
-      />/g,
-      "&gt;"
-    )
-
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-
-    .replace(
-      /'/g,
-      "&#039;"
-    );
+  return Number(
+    valor || 0
+  )
+  .toLocaleString(
+    "es-PE",
+    {
+      maximumFractionDigits:
+        0
+    }
+  );
 
 }
 
 
 // ======================================================
-// ACTUALIZACIÓN AUTOMÁTICA
+// 36. TEXTO HTML SEGURO
+// ======================================================
+
+function escapar(
+  valor
+) {
+
+  return String(
+    valor ?? ""
+  )
+  .replace(
+    /&/g,
+    "&amp;"
+  )
+  .replace(
+    /</g,
+    "&lt;"
+  )
+  .replace(
+    />/g,
+    "&gt;"
+  )
+  .replace(
+    /"/g,
+    "&quot;"
+  )
+  .replace(
+    /'/g,
+    "&#039;"
+  );
+
+}
+
+
+// ======================================================
+// 37. PONER TEXTO
+// ======================================================
+
+function poner(
+  id,
+  valor
+) {
+
+  const elemento =
+    document.getElementById(
+      id
+    );
+
+
+  if (elemento) {
+
+    elemento.textContent =
+      valor;
+
+  }
+
+}
+
+
+// ======================================================
+// 38. ACTUALIZACIÓN AUTOMÁTICA
 // ======================================================
 
 setInterval(
-  function () {
-
-    cargarDatos();
-
-  },
+  cargarDatos,
   5 * 60 * 1000
 );
