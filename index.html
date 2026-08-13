@@ -2,46 +2,62 @@
 <html lang="es">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Dashboard RDVSINDECI</title>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Análisis de Producción</title>
 
   <link rel="stylesheet" href="style.css">
 
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <!-- Leaflet - Mapa -->
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  />
+  <!-- CHART.JS -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 
 </head>
 
+
 <body>
 
-  <!-- ============================= -->
-  <!-- ENCABEZADO -->
-  <!-- ============================= -->
+  <!-- =====================================================
+       ENCABEZADO
+  ====================================================== -->
 
-  <header class="encabezado">
+  <header class="topbar">
 
-    <div>
-      <h1>Dashboard RDVSINDECI</h1>
+    <div class="brand">
 
-      <p>
-        Control de renovaciones, RD, máquinas GENEX y aforo
-      </p>
+      <div class="brand-icon">
+        MM
+      </div>
+
+      <div>
+
+        <h1>
+          Análisis de Producción
+        </h1>
+
+        <p>
+          Dashboard operativo de producción
+        </p>
+
+      </div>
+
     </div>
 
-    <div class="conexion">
 
-      <span id="indicadorConexion" class="punto"></span>
+    <div class="estado">
+
+      <span
+        id="indicadorConexion"
+        class="estado-punto"
+      ></span>
 
       <span id="textoConexion">
-        Conectando con Google Sheets...
+        Conectando...
       </span>
 
     </div>
@@ -49,214 +65,23 @@
   </header>
 
 
-  <!-- ============================= -->
-  <!-- CONTENEDOR PRINCIPAL -->
-  <!-- ============================= -->
+  <main class="dashboard">
 
-  <main class="contenedor">
 
+    <!-- ===================================================
+         FILTROS
+    ==================================================== -->
 
-    <!-- ============================= -->
-    <!-- BARRA DE ACCIONES -->
-    <!-- ============================= -->
-
-    <section class="barra-acciones">
-
-      <div>
-
-        <strong id="cantidadSalas">
-          0
-        </strong>
-
-        <span>
-          salas registradas
-        </span>
-
-      </div>
-
-
-      <div class="acciones">
-
-        <button
-          id="btnActualizar"
-          onclick="cargarDatos()">
-
-          ↻ Actualizar
-
-        </button>
-
-      </div>
-
-    </section>
-
-
-    <!-- ============================= -->
-    <!-- TARJETAS KPI -->
-    <!-- ============================= -->
-
-    <section class="tarjetas">
-
-
-      <div class="tarjeta">
-
-        <span class="icono">
-          🏢
-        </span>
-
-        <div>
-
-          <span class="titulo">
-            SALAS
-          </span>
-
-          <strong id="kpiSalas">
-            0
-          </strong>
-
-        </div>
-
-      </div>
-
-
-      <div class="tarjeta">
-
-        <span class="icono">
-          📐
-        </span>
-
-        <div>
-
-          <span class="titulo">
-            ESPACIOS INDECI
-          </span>
-
-          <strong id="kpiEspacios">
-            0
-          </strong>
-
-        </div>
-
-      </div>
-
-
-      <div class="tarjeta">
-
-        <span class="icono">
-          🎰
-        </span>
-
-        <div>
-
-          <span class="titulo">
-            RD MÁQUINAS
-          </span>
-
-          <strong id="kpiRD">
-            0
-          </strong>
-
-        </div>
-
-      </div>
-
-
-      <div class="tarjeta">
-
-        <span class="icono">
-          ⚙️
-        </span>
-
-        <div>
-
-          <span class="titulo">
-            MÁQUINAS GENEX
-          </span>
-
-          <strong id="kpiGenex">
-            0
-          </strong>
-
-        </div>
-
-      </div>
-
-
-      <div class="tarjeta">
-
-        <span class="icono">
-          ⚠️
-        </span>
-
-        <div>
-
-          <span class="titulo">
-            DIF. INDECI VS RD
-          </span>
-
-          <strong id="kpiDiferencia">
-            0
-          </strong>
-
-        </div>
-
-      </div>
-
-
-      <div class="tarjeta">
-
-        <span class="icono">
-          🔄
-        </span>
-
-        <div>
-
-          <span class="titulo">
-            DIF. RD VS GENEX
-          </span>
-
-          <strong id="kpiDiferenciaGenex">
-            0
-          </strong>
-
-        </div>
-
-      </div>
-
-
-    </section>
-
-
-    <!-- ============================= -->
-    <!-- FILTROS -->
-    <!-- ============================= -->
-
-    <section class="filtros">
+    <section class="filtros-panel">
 
       <div class="filtro">
 
-        <label>
-          Buscar sala
-        </label>
+        <label>SALA</label>
 
-        <input
-          type="text"
-          id="buscarSala"
-          placeholder="Escribe una sala..."
-        >
-
-      </div>
-
-
-      <div class="filtro">
-
-        <label>
-          Sector
-        </label>
-
-        <select id="filtroSector">
+        <select id="filtroSala">
 
           <option value="">
-            Todos los sectores
+            Todas las salas
           </option>
 
         </select>
@@ -266,9 +91,52 @@
 
       <div class="filtro">
 
-        <label>
-          Mes última emisión RD
-        </label>
+        <label>MARCA / TIPO / VERSIÓN</label>
+
+        <select id="filtroMarca">
+
+          <option value="">
+            Todas las marcas
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="filtro">
+
+        <label>SERIE</label>
+
+        <select id="filtroSerie">
+
+          <option value="">
+            Todas las series
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="filtro">
+
+        <label>JUEGO</label>
+
+        <select id="filtroJuego">
+
+          <option value="">
+            Todos los juegos
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="filtro">
+
+        <label>MES</label>
 
         <select id="filtroMes">
 
@@ -283,26 +151,51 @@
 
       <div class="filtro">
 
-        <label>
-          Renovación
-        </label>
+        <label>AÑO</label>
 
-        <select id="filtroRenovacion">
+        <select id="filtroAnio">
 
           <option value="">
-            Todas
+            Todos los años
           </option>
 
-          <option value="VENCIDA">
-            Vencidas
+        </select>
+
+      </div>
+
+
+      <div class="filtro">
+
+        <label>INDICADOR</label>
+
+        <select id="filtroIndicador">
+
+          <option value="COIN">
+            COIN
           </option>
 
-          <option value="PROXIMA">
-            Próximas
+          <option value="COIN PROM">
+            COIN PROM
           </option>
 
-          <option value="VIGENTE">
-            Vigentes
+          <option value="VENTA">
+            VENTA
+          </option>
+
+          <option value="VENTA PROM">
+            VENTA PROM
+          </option>
+
+          <option value="NETWIN ($)">
+            NETWIN ($)
+          </option>
+
+          <option value="T.C">
+            T.C.
+          </option>
+
+          <option value="% PAGO">
+            % PAGO
           </option>
 
         </select>
@@ -311,167 +204,383 @@
 
 
       <button
+        id="btnLimpiar"
         class="btn-limpiar"
-        onclick="limpiarFiltros()">
-
-        Limpiar filtros
-
+      >
+        Limpiar
       </button>
 
     </section>
 
 
-    <!-- ============================= -->
-    <!-- GRÁFICOS -->
-    <!-- ============================= -->
 
-    <section class="graficos">
+    <!-- ===================================================
+         KPIs
+    ==================================================== -->
+
+    <section class="kpis">
 
 
-      <div class="grafico">
+      <article class="kpi">
 
-        <div class="grafico-header">
-
-          <h2>
-            INDECI vs RD
-          </h2>
-
+        <div class="kpi-titulo">
+          COIN
         </div>
 
-        <div class="grafico-contenido">
-
-          <canvas id="graficoIndeciRD"></canvas>
-
+        <div
+          id="kpiCoin"
+          class="kpi-valor"
+        >
+          0
         </div>
 
-      </div>
-
-
-      <div class="grafico">
-
-        <div class="grafico-header">
-
-          <h2>
-            RD vs GENEX
-          </h2>
-
+        <div class="kpi-sub">
+          Total filtrado
         </div>
 
-        <div class="grafico-contenido">
+      </article>
 
-          <canvas id="graficoRDGenex"></canvas>
 
+      <article class="kpi">
+
+        <div class="kpi-titulo">
+          VENTA
         </div>
 
-      </div>
-
-
-      <div class="grafico grafico-grande">
-
-        <div class="grafico-header">
-
-          <h2>
-            Salas por sector
-          </h2>
-
+        <div
+          id="kpiVenta"
+          class="kpi-valor"
+        >
+          0
         </div>
 
-        <div class="grafico-contenido">
-
-          <canvas id="graficoSectores"></canvas>
-
+        <div class="kpi-sub">
+          Total filtrado
         </div>
 
-      </div>
+      </article>
 
 
-      <div class="grafico grafico-grande">
+      <article class="kpi">
 
-        <div class="grafico-header">
-
-          <h2>
-            Renovaciones
-          </h2>
-
+        <div class="kpi-titulo">
+          NETWIN
         </div>
 
-        <div class="grafico-contenido">
-
-          <canvas id="graficoRenovaciones"></canvas>
-
+        <div
+          id="kpiNetwin"
+          class="kpi-valor"
+        >
+          0
         </div>
 
-      </div>
+        <div class="kpi-sub">
+          Total filtrado
+        </div>
+
+      </article>
+
+
+      <article class="kpi">
+
+        <div class="kpi-titulo">
+          % PAGO
+        </div>
+
+        <div
+          id="kpiPago"
+          class="kpi-valor"
+        >
+          0.00%
+        </div>
+
+        <div class="kpi-sub">
+          Promedio filtrado
+        </div>
+
+      </article>
+
+
+      <article class="kpi">
+
+        <div class="kpi-titulo">
+          REGISTROS
+        </div>
+
+        <div
+          id="kpiRegistros"
+          class="kpi-valor"
+        >
+          0
+        </div>
+
+        <div class="kpi-sub">
+          Registros encontrados
+        </div>
+
+      </article>
 
 
     </section>
 
 
-    <!-- ============================= -->
-    <!-- MAPA DEL PERÚ -->
-    <!-- ============================= -->
 
-    <section class="mapa-panel">
+    <!-- ===================================================
+         GRÁFICO EVOLUTIVO + MAPA
+    ==================================================== -->
 
-      <div class="mapa-header">
+    <section class="grid-principal">
 
-        <div>
 
-          <h2>
-            Distribución geográfica
-          </h2>
+      <article class="card">
 
-          <p>
-            Salas RDVSINDECI en el territorio nacional
-          </p>
+        <div class="card-header">
+
+          <div>
+
+            <h2>
+              Evolución del indicador
+            </h2>
+
+            <span id="subtituloEvolucion">
+              Evolución mensual
+            </span>
+
+          </div>
+
+        </div>
+
+        <div class="chart-box grande">
+
+          <canvas id="graficoEvolucion"></canvas>
+
+        </div>
+
+      </article>
+
+
+
+      <article class="card">
+
+        <div class="card-header">
+
+          <div>
+
+            <h2>
+              Distribución por Perú
+            </h2>
+
+            <span>
+              Salas según ubicación
+            </span>
+
+          </div>
 
         </div>
 
 
-        <div class="mapa-resumen">
+        <div
+          id="mapaPeru"
+          class="mapa"
+        >
+
+          <div class="mapa-titulo">
+            PERÚ
+          </div>
+
+          <div
+            id="puntoLima"
+            class="mapa-punto"
+            style="left:42%;top:76%;"
+          >
+            <span>Lima</span>
+          </div>
+
+          <div
+            id="puntoTrujillo"
+            class="mapa-punto"
+            style="left:39%;top:42%;"
+          >
+            <span>Trujillo</span>
+          </div>
+
+          <div
+            id="puntoChiclayo"
+            class="mapa-punto"
+            style="left:42%;top:33%;"
+          >
+            <span>Chiclayo</span>
+          </div>
+
+          <div
+            id="puntoChincha"
+            class="mapa-punto"
+            style="left:43%;top:70%;"
+          >
+            <span>Chincha</span>
+          </div>
+
+          <div
+            id="puntoPucallpa"
+            class="mapa-punto"
+            style="left:66%;top:48%;"
+          >
+            <span>Pucallpa</span>
+          </div>
+
+        </div>
+
+      </article>
+
+
+    </section>
+
+
+
+    <!-- ===================================================
+         RANKINGS
+    ==================================================== -->
+
+    <section class="grid-rankings">
+
+
+      <article class="card">
+
+        <div class="card-header">
+
+          <div>
+
+            <h2>
+              Ranking de salas
+            </h2>
+
+            <span>
+              Sala vs indicador
+            </span>
+
+          </div>
+
+        </div>
+
+        <div class="chart-box">
+
+          <canvas id="graficoSalas"></canvas>
+
+        </div>
+
+      </article>
+
+
+
+      <article class="card">
+
+        <div class="card-header">
+
+          <div>
+
+            <h2>
+              Ranking de juegos
+            </h2>
+
+            <span>
+              Juego vs indicador
+            </span>
+
+          </div>
+
+        </div>
+
+        <div class="chart-box">
+
+          <canvas id="graficoJuegos"></canvas>
+
+        </div>
+
+      </article>
+
+
+
+      <article class="card">
+
+        <div class="card-header">
+
+          <div>
+
+            <h2>
+              Ranking de marcas
+            </h2>
+
+            <span>
+              Marca vs indicador
+            </span>
+
+          </div>
+
+        </div>
+
+        <div class="chart-box">
+
+          <canvas id="graficoMarcas"></canvas>
+
+        </div>
+
+      </article>
+
+
+
+      <article class="card">
+
+        <div class="card-header">
+
+          <div>
+
+            <h2>
+              Indicador seleccionado
+            </h2>
+
+            <span id="nombreIndicador">
+              COIN
+            </span>
+
+          </div>
+
+        </div>
+
+        <div class="indicador-grande">
+
+          <strong id="valorIndicador">
+            0
+          </strong>
 
           <span>
-            <strong id="salasMapa">
-              0
-            </strong>
-
-            salas
+            Valor promedio / total según indicador
           </span>
 
         </div>
 
-      </div>
-
-
-      <div id="mapaPeru">
-
-        <div class="mapa-cargando">
-          Cargando mapa...
-        </div>
-
-      </div>
+      </article>
 
 
     </section>
 
 
-    <!-- ============================= -->
-    <!-- TABLA -->
-    <!-- ============================= -->
 
-    <section class="panel">
+    <!-- ===================================================
+         TABLA COMPLETA
+    ==================================================== -->
 
+    <section class="card tabla-card">
 
-      <div class="panel-header">
+      <div class="card-header">
 
         <div>
 
           <h2>
-            Detalle de salas
+            Detalle completo
           </h2>
 
-          <span id="contadorResultados">
-            0 registros
+          <span>
+            Información de los registros filtrados
           </span>
 
         </div>
@@ -479,56 +588,68 @@
       </div>
 
 
-      <div class="tabla-contenedor">
+      <div class="tabla-scroll">
 
-        <table>
+        <table id="tablaDatos">
 
           <thead>
 
             <tr>
 
               <th>
-                SECTOR
+                MARCA / TIPO / VERSIÓN
               </th>
 
               <th>
-                SALA
+                SERIE
               </th>
 
               <th>
-                ESPACIOS INDECI
+                JUEGO
               </th>
 
               <th>
-                RD MAQ.
+                COIN
               </th>
 
               <th>
-                INDECI VS RD
+                COIN PROM
               </th>
 
               <th>
-                GENEX
+                VENTA
               </th>
 
               <th>
-                RD VS GENEX
+                VENTA PROM
               </th>
 
               <th>
-                AFORO
+                NETWIN ($)
               </th>
 
               <th>
-                RENOVACIÓN
+                G.PLAYED
               </th>
 
               <th>
-                ÚLTIMA EMISIÓN RD
+                % PAGO
               </th>
 
               <th>
-                ESTADO
+                LOCAL
+              </th>
+
+              <th>
+                MES
+              </th>
+
+              <th>
+                AÑO
+              </th>
+
+              <th>
+                T.C.
               </th>
 
             </tr>
@@ -536,21 +657,7 @@
           </thead>
 
 
-          <tbody id="tablaCuerpo">
-
-            <tr>
-
-              <td
-                colspan="11"
-                class="sin-datos">
-
-                Cargando datos...
-
-              </td>
-
-            </tr>
-
-          </tbody>
+          <tbody id="tablaCuerpo"></tbody>
 
         </table>
 
@@ -562,51 +669,6 @@
   </main>
 
 
-  <!-- ============================= -->
-  <!-- MODAL DETALLE -->
-  <!-- ============================= -->
-
-  <div
-    id="modalDetalle"
-    class="modal">
-
-    <div class="modal-contenido">
-
-      <button
-        class="cerrar-modal"
-        onclick="cerrarModal()">
-
-        ×
-
-      </button>
-
-      <h2 id="modalTitulo">
-        Detalle de sala
-      </h2>
-
-      <div
-        id="modalDatos"
-        class="modal-datos">
-
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <!-- ============================= -->
-  <!-- LEAFLET - MAPA -->
-  <!-- ============================= -->
-
-  <script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
-  </script>
-
-
-  <!-- ============================= -->
-  <!-- JAVASCRIPT DEL DASHBOARD -->
-  <!-- ============================= -->
 
   <script src="script.js"></script>
 
