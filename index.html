@@ -1,1 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <title>Dashboard</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <header class="encabezado">
+    <h1>Dashboard de Operaciones</h1>
+    <p>Panel de información</p>
+  </header>
+
+  <main class="contenedor">
+
+    <section class="tarjetas">
+
+      <div class="tarjeta">
+        <span class="titulo">Total de registros</span>
+        <strong id="totalRegistros">0</strong>
+      </div>
+
+      <div class="tarjeta">
+        <span class="titulo">Pendientes</span>
+        <strong id="pendientes">0</strong>
+      </div>
+
+      <div class="tarjeta">
+        <span class="titulo">Completados</span>
+        <strong id="completados">0</strong>
+      </div>
+
+    </section>
+
+    <section class="panel">
+
+      <div class="panel-header">
+        <h2>Registros</h2>
+
+        <button id="btnActualizar" onclick="cargarDatos()">
+          Actualizar
+        </button>
+      </div>
+
+      <div class="tabla-contenedor">
+
+        <table id="tablaDatos">
+
+          <thead>
+            <tr>
+              <th>Sala</th>
+              <th>Estado</th>
+              <th>Fecha</th>
+              <th>Observación</th>
+            </tr>
+          </thead>
+
+          <tbody id="tablaCuerpo">
+            <tr>
+              <td colspan="4" class="sin-datos">
+                Cargando datos...
+              </td>
+            </tr>
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <script src="script.js"></script>
+
+</body>
+</html>
