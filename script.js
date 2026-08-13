@@ -1,100 +1,125 @@
 const URL_SHEET =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vSDiUWbgHCJ6tZKNZlp8sHUnXKH7TMMEerEQh5aKT4Uytz2dnxhBYAA_Gb2zFIPCLwJ7Sc55c5xDVON/pub?output=csv&gid=909592397";
 
+
 async function cargarDatos() {
+
   const cuerpo = document.getElementById("tablaCuerpo");
 
   cuerpo.innerHTML = `
     <tr>
       <td colspan="4" class="sin-datos">
-        Cargando datos...
+        Cargando datos de Google Sheets...
       </td>
     </tr>
   `;
 
   try {
+
     const respuesta = await fetch(URL_SHEET);
 
     if (!respuesta.ok) {
-      throw new Error("No se pudo acceder al Google Sheet");
+      throw new Error("No se pudo conectar con Google Sheets");
     }
 
     const texto = await respuesta.text();
 
-    console.log("Datos recibidos:", texto);
+    console.log("Google Sheet:", texto);
 
     const filas = convertirCSV(texto);
 
-    if (filas.length <= 1) {
+    if (filas.length < 2) {
+
       cuerpo.innerHTML = `
         <tr>
           <td colspan="4" class="sin-datos">
-            No hay datos disponibles
+            No se encontraron registros.
           </td>
         </tr>
       `;
+
       return;
     }
 
-    const encabezados = filas[0];
+    const encabezados = filas[0].map(function(encabezado) {
+      return encabezado.trim();
+    });
+
 
     const datos = filas.slice(1).map(function(fila) {
-      let registro = {};
+
+      const registro = {};
 
       encabezados.forEach(function(encabezado, indice) {
-        registro[encabezado.trim()] =
+
+        registro[encabezado] =
           fila[indice] ? fila[indice].trim() : "";
+
       });
 
       return registro;
+
     });
+
 
     mostrarDatos(datos);
 
   } catch (error) {
 
-    console.error("Error:", error);
+    console.error(error);
 
     cuerpo.innerHTML = `
       <tr>
         <td colspan="4" class="sin-datos">
-          Error al cargar los datos
+          ❌ No se pudo conectar con Google Sheets
         </td>
       </tr>
     `;
+
   }
+
 }
+
 
 
 function convertirCSV(texto) {
 
   const filas = [];
+
   let fila = [];
   let campo = "";
-  let dentroComillas = false;
+  let comillas = false;
+
 
   for (let i = 0; i < texto.length; i++) {
 
     const caracter = texto[i];
     const siguiente = texto[i + 1];
 
-    if (caracter === '"' && dentroComillas && siguiente === '"') {
+
+    if (caracter === '"' && comillas && siguiente === '"') {
 
       campo += '"';
       i++;
 
-    } else if (caracter === '"') {
+    }
 
-      dentroComillas = !dentroComillas;
+    else if (caracter === '"') {
 
-    } else if (caracter === "," && !dentroComillas) {
+      comillas = !comillas;
+
+    }
+
+    else if (caracter === "," && !comillas) {
 
       fila.push(campo);
       campo = "";
 
-    } else if (
+    }
+
+    else if (
       (caracter === "\n" || caracter === "\r") &&
-      !dentroComillas
+      !comillas
     ) {
 
       if (caracter === "\r" && siguiente === "\n") {
@@ -108,26 +133,37 @@ function convertirCSV(texto) {
           return valor.trim() !== "";
         })
       ) {
+
         filas.push(fila);
+
       }
 
       fila = [];
       campo = "";
 
-    } else {
+    }
+
+    else {
 
       campo += caracter;
 
     }
+
   }
+
 
   if (campo !== "" || fila.length > 0) {
+
     fila.push(campo);
     filas.push(fila);
+
   }
 
+
   return filas;
+
 }
+
 
 
 function mostrarDatos(datos) {
@@ -136,9 +172,11 @@ function mostrarDatos(datos) {
 
   cuerpo.innerHTML = "";
 
+
   datos.forEach(function(registro) {
 
     const fila = document.createElement("tr");
+
 
     fila.innerHTML = `
       <td>${registro["SALA"] || ""}</td>
@@ -147,38 +185,49 @@ function mostrarDatos(datos) {
       <td>${registro["OBSERVACIÓN"] || ""}</td>
     `;
 
+
     cuerpo.appendChild(fila);
 
   });
 
+
   actualizarResumen(datos);
+
 }
+
 
 
 function actualizarResumen(datos) {
 
   const total = datos.length;
 
+
   const pendientes = datos.filter(function(registro) {
 
     return (registro["ESTADO"] || "")
-      .toUpperCase() === "PENDIENTE";
+      .toUpperCase()
+      .includes("PENDIENT");
 
   }).length;
+
 
   const completados = datos.filter(function(registro) {
 
     return (registro["ESTADO"] || "")
-      .toUpperCase() === "COMPLETADO";
+      .toUpperCase()
+      .includes("COMPLET");
 
   }).length;
+
 
   document.getElementById("totalRegistros").textContent = total;
 
   document.getElementById("pendientes").textContent = pendientes;
 
   document.getElementById("completados").textContent = completados;
+
 }
+
 
 
 document.addEventListener("DOMContentLoaded", function() {
