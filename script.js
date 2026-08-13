@@ -13,6 +13,153 @@ let graficoRDGenex = null;
 let graficoSectores = null;
 let graficoRenovaciones = null;
 
+let mapaPeru = null;
+let marcadoresMapa = [];
+
+
+// ======================================================
+// COORDENADAS DE LAS SALAS
+// ======================================================
+//
+// NO SE TOMAN DE GOOGLE SHEETS.
+// Se infieren a partir del nombre de SALAS.
+//
+// Las coordenadas son de referencia geográfica de la
+// ciudad/distrito donde se encuentra la sala.
+//
+
+const UBICACIONES_SALAS = {
+
+  // =========================
+  // LIMA METROPOLITANA
+  // =========================
+
+  "2 DE MAYO": [-12.0528, -77.0435],
+
+  "BARRANCO": [-12.1440, -77.0205],
+
+  "BOLIVAR": [-12.0760, -77.0710],
+
+  "CHORRILLOS": [-12.1715, -77.0245],
+
+  "CHOSICA": [-11.9360, -76.6950],
+
+  "COLONIAL": [-12.0620, -77.1050],
+
+  "COMAS": [-11.9440, -77.0610],
+
+  "ELIO": [-12.0690, -77.0750],
+
+  "GAMARRA": [-12.0675, -77.0145],
+
+  "LOS OLIVOS": [-11.9940, -77.0700],
+
+  "LURIN": [-12.2760, -76.8750],
+
+  "MANCO CAPAC": [-12.0680, -77.0150],
+
+  "SAN GERMAN": [-11.9800, -77.0830],
+
+  "SAN JUAN": [-12.1570, -76.9730],
+
+  "SAN MARTIN": [-12.0110, -77.0810],
+
+  "SANTA ANITA": [-12.0430, -76.9710],
+
+  "VENTANILLA": [-11.8750, -77.1180],
+
+  "VILLA": [-12.2140, -76.9380],
+
+  "ZARATE": [-11.9950, -77.0080],
+
+
+  // =========================
+  // LIMA PROVINCIA
+  // =========================
+
+  "BARRANCA": [-10.7530, -77.7600],
+
+  "HUACHO": [-11.1060, -77.6050],
+
+  "HUARAL": [-11.4950, -77.2070],
+
+
+  // =========================
+  // COSTA
+  // =========================
+
+  "CHICLAYO": [-6.7714, -79.8409],
+
+  "CHIMBOTE": [-9.0745, -78.5936],
+
+  "CHINCHA": [-13.4098, -76.1322],
+
+  "HUARAZ": [-9.5278, -77.5278],
+
+  "HUARMEY": [-10.0680, -78.1520],
+
+  "ICA": [-14.0678, -75.7286],
+
+  "ILO": [-17.6394, -71.3375],
+
+  "LAMBAYEQUE": [-6.7011, -79.9061],
+
+  "MOQUEGUA": [-17.1930, -70.9330],
+
+  "PIURA": [-5.1945, -80.6328],
+
+  "SULLANA": [-4.9039, -80.6853],
+
+  "TACNA": [-18.0146, -70.2536],
+
+  "TRUJILLO": [-8.1116, -79.0287],
+
+  "TUMBES": [-3.5669, -80.4515],
+
+
+  // =========================
+  // SIERRA
+  // =========================
+
+  "ABANCAY": [-13.6339, -72.8814],
+
+  "ANDAHUAYLAS": [-13.6556, -73.3872],
+
+  "AREQUIPA": [-16.4090, -71.5375],
+
+  "AYACUCHO": [-13.1588, -74.2232],
+
+  "CAJAMARCA": [-7.1617, -78.5128],
+
+  "CUSCO": [-13.5319, -71.9675],
+
+  "HUANCAYO": [-12.0651, -75.2049],
+
+  "JULIACA": [-15.4890, -70.1290],
+
+  "PUNO": [-15.8402, -70.0219],
+
+
+  // =========================
+  // SELVA
+  // =========================
+
+  "BAGUA GRANDE": [-5.7565, -78.4425],
+
+  "IQUITOS": [-3.7437, -73.2516],
+
+  "JAEN": [-5.7073, -78.8078],
+
+  "JAÉN": [-5.7073, -78.8078],
+
+  "MOYOBAMBA": [-6.0340, -76.9728],
+
+  "PUCALLPA": [-8.3791, -74.5539],
+
+  "TARAPOTO": [-6.4850, -76.3625]
+
+};
+
 
 // ======================================================
 // INICIO
@@ -22,9 +169,50 @@ document.addEventListener("DOMContentLoaded", function () {
 
   configurarEventos();
 
+  inicializarMapa();
+
   cargarDatos();
 
 });
+
+
+// ======================================================
+// INICIALIZAR MAPA
+// ======================================================
+
+function inicializarMapa() {
+
+  const contenedor =
+    document.getElementById("mapaPeru");
+
+  if (!contenedor) return;
+
+  mapaPeru = L.map(
+    "mapaPeru",
+    {
+      zoomControl: true,
+      minZoom: 5,
+      maxZoom: 18
+    }
+  );
+
+  // OpenStreetMap
+  L.tileLayer(
+    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    {
+      attribution:
+        '&copy; OpenStreetMap contributors'
+    }
+  ).addTo(mapaPeru);
+
+
+  // Vista inicial del Perú
+  mapaPeru.setView(
+    [-9.2, -75.0],
+    5.5
+  );
+
+}
 
 
 // ======================================================
@@ -44,33 +232,45 @@ async function cargarDatos() {
     textoConexion.textContent =
       "Conectando con Google Sheets...";
 
-    indicador.style.background = "#ffb300";
+    indicador.style.background =
+      "#ffb300";
 
 
-    const respuesta = await fetch(URL_DATOS + "?t=" + Date.now());
+    const respuesta =
+      await fetch(
+        URL_DATOS +
+        "?t=" +
+        Date.now()
+      );
+
 
     if (!respuesta.ok) {
 
       throw new Error(
-        "Error HTTP " + respuesta.status
+        "Error HTTP " +
+        respuesta.status
       );
 
     }
 
 
-    const datos = await respuesta.json();
+    const datos =
+      await respuesta.json();
 
 
-    datosOriginales = Array.isArray(datos)
-      ? datos
-      : [];
+    datosOriginales =
+      Array.isArray(datos)
+        ? datos
+        : [];
 
 
-    datosFiltrados = [...datosOriginales];
+    datosFiltrados =
+      [...datosOriginales];
 
 
     textoConexion.textContent =
       "Google Sheets conectado";
+
 
     indicador.style.background =
       "#21c55d";
@@ -134,16 +334,24 @@ async function cargarDatos() {
 function configurarEventos() {
 
   const buscar =
-    document.getElementById("buscarSala");
+    document.getElementById(
+      "buscarSala"
+    );
 
   const sector =
-    document.getElementById("filtroSector");
+    document.getElementById(
+      "filtroSector"
+    );
 
   const mes =
-    document.getElementById("filtroMes");
+    document.getElementById(
+      "filtroMes"
+    );
 
   const renovacion =
-    document.getElementById("filtroRenovacion");
+    document.getElementById(
+      "filtroRenovacion"
+    );
 
 
   buscar.addEventListener(
@@ -179,10 +387,14 @@ function configurarEventos() {
 function llenarFiltros() {
 
   const sectorSelect =
-    document.getElementById("filtroSector");
+    document.getElementById(
+      "filtroSector"
+    );
 
   const mesSelect =
-    document.getElementById("filtroMes");
+    document.getElementById(
+      "filtroMes"
+    );
 
 
   sectorSelect.innerHTML = `
@@ -200,67 +412,87 @@ function llenarFiltros() {
 
 
   const sectores =
-    [...new Set(
+    [
+      ...new Set(
 
-      datosOriginales
+        datosOriginales
 
-        .map(d =>
-          String(d["SECTOR"] || "").trim()
-        )
+          .map(d =>
+            String(
+              d["SECTOR"] ||
+              ""
+            ).trim()
+          )
 
-        .filter(Boolean)
+          .filter(Boolean)
 
-    )]
-
-
-    .sort();
+      )
+    ].sort();
 
 
-  sectores.forEach(function (sector) {
+  sectores.forEach(
+    function (sector) {
 
-    const option =
-      document.createElement("option");
+      const option =
+        document.createElement(
+          "option"
+        );
 
-    option.value = sector;
+      option.value =
+        sector;
 
-    option.textContent = sector;
+      option.textContent =
+        sector;
 
-    sectorSelect.appendChild(option);
+      sectorSelect.appendChild(
+        option
+      );
 
-  });
+    }
+  );
 
 
   const meses =
-    [...new Set(
+    [
+      ...new Set(
 
-      datosOriginales
+        datosOriginales
 
-        .map(d =>
-          String(
-            d["MES DE LA ULTIMA EMISIÓN RD"] || ""
-          ).trim()
-        )
+          .map(d =>
+            String(
+              d[
+                "MES DE LA ULTIMA EMISIÓN RD"
+              ] ||
+              ""
+            ).trim()
+          )
 
-        .filter(Boolean)
+          .filter(Boolean)
 
-    )]
-
-
-    .sort();
+      )
+    ].sort();
 
 
-  meses.forEach(function (mes) {
+  meses.forEach(
+    function (mes) {
 
-    const option =
-      document.createElement("option");
+      const option =
+        document.createElement(
+          "option"
+        );
 
-    option.value = mes;
+      option.value =
+        mes;
 
-    option.textContent = mes;
+      option.textContent =
+        mes;
 
-    mesSelect.appendChild(option);
+      mesSelect.appendChild(
+        option
+      );
 
-  });
+    }
+  );
 
 }
 
@@ -298,79 +530,76 @@ function aplicarFiltros() {
 
 
   datosFiltrados =
-    datosOriginales.filter(function (registro) {
+    datosOriginales.filter(
+      function (registro) {
 
 
-      // BUSCAR SALA
-
-      const sala =
-        String(
-          registro["SALAS"] || ""
-        ).toLowerCase();
-
-
-      if (
-        texto &&
-        !sala.includes(texto)
-      ) {
-
-        return false;
-
-      }
-
-
-      // SECTOR
-
-      if (
-        sector &&
-        registro["SECTOR"] !== sector
-      ) {
-
-        return false;
-
-      }
-
-
-      // MES
-
-      if (
-        mes &&
-        registro[
-          "MES DE LA ULTIMA EMISIÓN RD"
-        ] !== mes
-      ) {
-
-        return false;
-
-      }
-
-
-      // RENOVACIÓN
-
-      if (renovacion) {
-
-        const estado =
-          obtenerEstadoRenovacion(
-            registro[
-              "RENOVACIÓN PARA INDECI"
-            ]
-          );
+        const sala =
+          String(
+            registro["SALAS"] ||
+            ""
+          ).toLowerCase();
 
 
         if (
-          estado.codigo !== renovacion
+          texto &&
+          !sala.includes(texto)
         ) {
 
           return false;
 
         }
 
+
+        if (
+          sector &&
+          registro["SECTOR"] !==
+          sector
+        ) {
+
+          return false;
+
+        }
+
+
+        if (
+          mes &&
+          registro[
+            "MES DE LA ULTIMA EMISIÓN RD"
+          ] !== mes
+        ) {
+
+          return false;
+
+        }
+
+
+        if (renovacion) {
+
+          const estado =
+            obtenerEstadoRenovacion(
+              registro[
+                "RENOVACIÓN PARA INDECI"
+              ]
+            );
+
+
+          if (
+            estado.codigo !==
+            renovacion
+          ) {
+
+            return false;
+
+          }
+
+        }
+
+
+        return true;
+
       }
-
-
-      return true;
-
-    });
+    );
 
 
   actualizarDashboard();
@@ -424,6 +653,9 @@ function actualizarDashboard() {
   actualizarTabla();
 
   actualizarGraficos();
+
+  actualizarMapa();
+
 
   document.getElementById(
     "contadorResultados"
@@ -510,13 +742,17 @@ function actualizarKPI() {
   document.getElementById(
     "kpiDiferencia"
   ).textContent =
-    formatearNumero(diferenciaIndeci);
+    formatearNumero(
+      diferenciaIndeci
+    );
 
 
   document.getElementById(
     "kpiDiferenciaGenex"
   ).textContent =
-    formatearNumero(diferenciaGenex);
+    formatearNumero(
+      diferenciaGenex
+    );
 
 }
 
@@ -531,7 +767,10 @@ function sumarCampo(
 ) {
 
   return datos.reduce(
-    function (total, registro) {
+    function (
+      total,
+      registro
+    ) {
 
       const valor =
         Number(
@@ -597,9 +836,10 @@ function actualizarTabla() {
   datosFiltrados.forEach(
     function (registro) {
 
-
       const fila =
-        document.createElement("tr");
+        document.createElement(
+          "tr"
+        );
 
 
       const renovacion =
@@ -639,7 +879,9 @@ function actualizarTabla() {
 
         <td>
           ${formatearNumero(
-            registro["RD MAQ."]
+            registro[
+              "RD MAQ."
+            ]
           )}
         </td>
 
@@ -657,7 +899,8 @@ function actualizarTabla() {
           ${formatearNumero(
             registro[
               "MAQUINAS GENEX"
-          ])}
+            ]
+          )}
         </td>
 
 
@@ -713,13 +956,17 @@ function actualizarTabla() {
         "click",
         function () {
 
-          abrirModal(registro);
+          abrirModal(
+            registro
+          );
 
         }
       );
 
 
-      cuerpo.appendChild(fila);
+      cuerpo.appendChild(
+        fila
+      );
 
     }
   );
@@ -731,7 +978,9 @@ function actualizarTabla() {
 // DIFERENCIA
 // ======================================================
 
-function mostrarDiferencia(valor) {
+function mostrarDiferencia(
+  valor
+) {
 
   const numero =
     Number(valor) || 0;
@@ -779,9 +1028,13 @@ function obtenerEstadoRenovacion(
   if (!fecha) {
 
     return {
+
       codigo: "VIGENTE",
+
       texto: "SIN FECHA",
+
       clase: "vigente"
+
     };
 
   }
@@ -794,9 +1047,13 @@ function obtenerEstadoRenovacion(
   if (!fechaRenovacion) {
 
     return {
+
       codigo: "VIGENTE",
+
       texto: "SIN FECHA",
+
       clase: "vigente"
+
     };
 
   }
@@ -817,7 +1074,8 @@ function obtenerEstadoRenovacion(
   const dias =
     Math.ceil(
       (
-        fechaRenovacion - hoy
+        fechaRenovacion -
+        hoy
       ) /
       (
         1000 *
@@ -1114,7 +1372,9 @@ function crearGraficoSectores() {
 
 
   const ordenados =
-    Object.entries(sectores)
+    Object.entries(
+      sectores
+    )
       .sort(
         (a, b) =>
           b[1] - a[1]
@@ -1228,7 +1488,6 @@ function crearGraficoRenovaciones() {
 
       }
 
-
       else if (
         estado.codigo ===
         "PROXIMA"
@@ -1237,7 +1496,6 @@ function crearGraficoRenovaciones() {
         proximas++;
 
       }
-
 
       else {
 
@@ -1303,10 +1561,347 @@ function crearGraficoRenovaciones() {
 
 
 // ======================================================
+// MAPA
+// ======================================================
+
+function actualizarMapa() {
+
+  if (!mapaPeru) return;
+
+
+  // Eliminar marcadores anteriores
+
+  marcadoresMapa.forEach(
+    function (marcador) {
+
+      mapaPeru.removeLayer(
+        marcador
+      );
+
+    }
+  );
+
+
+  marcadoresMapa = [];
+
+
+  let cantidadUbicada = 0;
+
+
+  datosFiltrados.forEach(
+    function (registro) {
+
+      const sala =
+        String(
+          registro["SALAS"] ||
+          ""
+        ).trim();
+
+
+      const coordenadas =
+        obtenerCoordenadasSala(
+          sala
+        );
+
+
+      if (!coordenadas) {
+
+        console.warn(
+          "Sala sin coordenadas:",
+          sala
+        );
+
+        return;
+
+      }
+
+
+      cantidadUbicada++;
+
+
+      const icono =
+        L.divIcon({
+
+          className:
+            "",
+
+          html:
+            '<div class="marcador-sala"></div>',
+
+          iconSize: [
+            16,
+            16
+          ],
+
+          iconAnchor: [
+            8,
+            8
+          ],
+
+          popupAnchor: [
+            0,
+            -8
+          ]
+
+        });
+
+
+      const marcador =
+        L.marker(
+          coordenadas,
+          {
+            icon: icono
+          }
+        );
+
+
+      const renovacion =
+        obtenerEstadoRenovacion(
+          registro[
+            "RENOVACIÓN PARA INDECI"
+          ]
+        );
+
+
+      const direccion =
+        obtenerDireccion(
+          registro
+        );
+
+
+      marcador.bindPopup(`
+
+        <div class="popup-sala">
+
+          <h3>
+            ${escaparHTML(sala)}
+          </h3>
+
+          <p>
+            <strong>Sector:</strong>
+            ${escaparHTML(
+              registro["SECTOR"] ||
+              "—"
+            )}
+          </p>
+
+          <p>
+            <strong>Dirección:</strong><br>
+            ${escaparHTML(
+              direccion
+            )}
+          </p>
+
+          <p>
+            <strong>Aforo:</strong>
+            ${formatearNumero(
+              registro["AFORO"]
+            )}
+          </p>
+
+          <p>
+            <strong>Renovación:</strong>
+            ${renovacion.texto}
+          </p>
+
+        </div>
+
+      `);
+
+
+      marcador.addTo(
+        mapaPeru
+      );
+
+
+      marcadoresMapa.push(
+        marcador
+      );
+
+    }
+  );
+
+
+  const contadorMapa =
+    document.getElementById(
+      "salasMapa"
+    );
+
+
+  if (contadorMapa) {
+
+    contadorMapa.textContent =
+      cantidadUbicada;
+
+  }
+
+}
+
+
+// ======================================================
+// OBTENER COORDENADAS POR NOMBRE DE SALA
+// ======================================================
+
+function obtenerCoordenadasSala(
+  nombre
+) {
+
+  const normalizado =
+    normalizarNombreSala(
+      nombre
+    );
+
+
+  // Primero busca coincidencia exacta
+  if (
+    UBICACIONES_SALAS[
+      normalizado
+    ]
+  ) {
+
+    return UBICACIONES_SALAS[
+      normalizado
+    ];
+
+  }
+
+
+  // Después intenta identificar la ciudad
+  // al inicio del nombre.
+  //
+  // Ejemplo:
+  // CHINCHA 4
+  // CHINCHA 3
+  // CHINCHA 1
+  //
+  // todos utilizarán CHINCHA.
+
+
+  const claves =
+    Object.keys(
+      UBICACIONES_SALAS
+    )
+      .sort(
+        (a, b) =>
+          b.length - a.length
+      );
+
+
+  for (
+    let i = 0;
+    i < claves.length;
+    i++
+  ) {
+
+    const clave =
+      claves[i];
+
+
+    if (
+      normalizado === clave ||
+      normalizado.startsWith(
+        clave + " "
+      )
+    ) {
+
+      return UBICACIONES_SALAS[
+        clave
+      ];
+
+    }
+
+  }
+
+
+  return null;
+
+}
+
+
+// ======================================================
+// NORMALIZAR NOMBRE DE SALA
+// ======================================================
+
+function normalizarNombreSala(
+  nombre
+) {
+
+  return String(
+    nombre || ""
+  )
+
+    .toUpperCase()
+
+    .normalize(
+      "NFD"
+    )
+
+    .replace(
+      /[\u0300-\u036f]/g,
+      ""
+    )
+
+    // Elimina contenido entre paréntesis
+    .replace(
+      /\([^)]*\)/g,
+      ""
+    )
+
+    // Convierte espacios y saltos
+    // de línea en un solo espacio
+    .replace(
+      /\s+/g,
+      " "
+    )
+
+    .trim();
+
+}
+
+
+// ======================================================
+// DIRECCIÓN
+// ======================================================
+//
+// Si tu Sheet ya tiene DIRECCIÓN, se utiliza.
+// Si no existe, se informa que no está disponible.
+//
+
+function obtenerDireccion(
+  registro
+) {
+
+  const direccion =
+    registro["DIRECCIÓN"] ||
+    registro["DIRECCION"] ||
+    "";
+
+
+  if (
+    String(
+      direccion
+    ).trim()
+  ) {
+
+    return String(
+      direccion
+    ).trim();
+
+  }
+
+
+  return "Dirección no registrada";
+
+}
+
+
+// ======================================================
 // MODAL
 // ======================================================
 
-function abrirModal(registro) {
+function abrirModal(
+  registro
+) {
 
   const modal =
     document.getElementById(
@@ -1331,7 +1926,8 @@ function abrirModal(registro) {
     "Detalle de sala";
 
 
-  contenido.innerHTML = "";
+  contenido.innerHTML =
+    "";
 
 
   const campos = [
@@ -1375,7 +1971,10 @@ function abrirModal(registro) {
       "RD vs GENEX"
     ],
 
-    ["AFORO", "Aforo"],
+    [
+      "AFORO",
+      "Aforo"
+    ],
 
     [
       "MES DE LA ULTIMA EMISIÓN RD",
@@ -1394,7 +1993,9 @@ function abrirModal(registro) {
     function (campo) {
 
       const valor =
-        registro[campo[0]];
+        registro[
+          campo[0]
+        ];
 
 
       const item =
@@ -1417,16 +2018,16 @@ function abrirModal(registro) {
       ) {
 
         valorMostrar =
-          formatearFecha(valor);
+          formatearFecha(
+            valor
+          );
 
       }
 
 
       if (
-        valorMostrar ===
-        null ||
-        valorMostrar ===
-        undefined ||
+        valorMostrar === null ||
+        valorMostrar === undefined ||
         valorMostrar === ""
       ) {
 
@@ -1444,14 +2045,18 @@ function abrirModal(registro) {
 
         <span>
           ${escaparHTML(
-            String(valorMostrar)
+            String(
+              valorMostrar
+            )
           )}
         </span>
 
       `;
 
 
-      contenido.appendChild(item);
+      contenido.appendChild(
+        item
+      );
 
     }
   );
@@ -1507,10 +2112,14 @@ document.addEventListener(
 // FORMATEAR FECHA
 // ======================================================
 
-function formatearFecha(valor) {
+function formatearFecha(
+  valor
+) {
 
   const fecha =
-    convertirFecha(valor);
+    convertirFecha(
+      valor
+    );
 
 
   if (!fecha) {
@@ -1540,7 +2149,9 @@ function formatearFecha(valor) {
 // CONVERTIR FECHA
 // ======================================================
 
-function convertirFecha(valor) {
+function convertirFecha(
+  valor
+) {
 
   if (!valor) {
 
@@ -1550,11 +2161,15 @@ function convertirFecha(valor) {
 
 
   const fecha =
-    new Date(valor);
+    new Date(
+      valor
+    );
 
 
   if (
-    !isNaN(fecha.getTime())
+    !isNaN(
+      fecha.getTime()
+    )
   ) {
 
     return fecha;
@@ -1571,10 +2186,14 @@ function convertirFecha(valor) {
 // FORMATO NÚMERO
 // ======================================================
 
-function formatearNumero(valor) {
+function formatearNumero(
+  valor
+) {
 
   const numero =
-    Number(valor) || 0;
+    Number(
+      valor
+    ) || 0;
 
 
   return numero.toLocaleString(
@@ -1588,7 +2207,9 @@ function formatearNumero(valor) {
 // ESCAPAR HTML
 // ======================================================
 
-function escaparHTML(valor) {
+function escaparHTML(
+  valor
+) {
 
   if (
     valor === null ||
@@ -1600,7 +2221,9 @@ function escaparHTML(valor) {
   }
 
 
-  return String(valor)
+  return String(
+    valor
+  )
 
     .replace(
       /&/g,
@@ -1633,8 +2256,9 @@ function escaparHTML(valor) {
 // ======================================================
 // ACTUALIZACIÓN AUTOMÁTICA
 // ======================================================
-
+//
 // Actualiza los datos cada 5 minutos.
+//
 
 setInterval(
   function () {
