@@ -29,103 +29,54 @@ let marcadoresMapa = [];
 const UBICACIONES_SALAS = {
 
   "2 DE MAYO": [-12.0525, -77.0432],
-
   "ABANCAY": [-13.6339, -72.8814],
-
   "ANDAHUAYLAS": [-13.6556, -73.3872],
-
   "AREQUIPA": [-16.3989, -71.5369],
-
   "AYACUCHO": [-13.1588, -74.2232],
-
   "BAGUA GRANDE": [-5.7560, -78.4380],
-
   "BARRANCA": [-10.7525, -77.7600],
-
   "BARRANCO": [-12.1455, -77.0200],
-
   "BOLIVAR": [-12.0715, -77.0610],
-
   "CAJAMARCA": [-7.1617, -78.5128],
-
   "CHICLAYO": [-6.7714, -79.8409],
-
   "CHIMBOTE": [-9.0745, -78.5936],
-
   "CHINCHA": [-13.4098, -76.1328],
-
   "CHORRILLOS": [-12.1715, -77.0247],
-
   "CHOSICA": [-11.9350, -76.6950],
-
   "COLONIAL": [-12.0570, -77.0950],
-
   "COMAS": [-11.9430, -77.0620],
-
   "CUSCO": [-13.5319, -71.9675],
-
   "ELIO": [-12.0580, -77.0730],
-
   "GAMARRA": [-12.0660, -77.0130],
-
   "HUACHO": [-11.1070, -77.6050],
-
   "HUARAL": [-11.4950, -77.2070],
-
   "HUARAZ": [-9.5278, -77.5278],
-
   "HUARMEY": [-10.0680, -78.1530],
-
   "ICA": [-14.0678, -75.7286],
-
   "ILO": [-17.6394, -71.3375],
-
   "IQUITOS": [-3.7437, -73.2516],
-
   "JAEN": [-5.7073, -78.8078],
-
   "JULIACA": [-15.4997, -70.1333],
-
   "LAMBAYEQUE": [-6.7011, -79.9061],
-
   "LOS OLIVOS": [-11.9600, -77.0750],
-
   "LURIN": [-12.2760, -76.8700],
-
   "MANCO CAPAC": [-12.0660, -77.0130],
-
   "MOQUEGUA": [-17.1936, -70.9327],
-
   "MOYOBAMBA": [-6.0340, -76.9728],
-
   "PIURA": [-5.1945, -80.6328],
-
   "PUCALLPA": [-8.3791, -74.5539],
-
   "PUNO": [-15.8402, -70.0219],
-
   "SAN GERMAN": [-11.9900, -77.0700],
-
   "SAN JUAN": [-12.1630, -76.9630],
-
   "SAN MARTIN": [-12.0020, -77.0780],
-
   "SANTA ANITA": [-12.0430, -76.9720],
-
   "SULLANA": [-4.9039, -80.6853],
-
   "TACNA": [-18.0147, -70.2536],
-
   "TARAPOTO": [-6.4880, -76.3650],
-
   "TRUJILLO": [-8.1116, -79.0287],
-
   "TUMBES": [-3.5669, -80.4515],
-
   "VENTANILLA": [-11.8750, -77.1180],
-
   "VILLA": [-12.2160, -76.9380],
-
   "ZARATE": [-12.0180, -76.9970]
 
 };
@@ -157,28 +108,36 @@ function inicializarMapa() {
 
   if (!contenedor) return;
 
-  // Elimina el mensaje "Cargando mapa..."
   contenedor.innerHTML = "";
 
   mapaPeru = L.map("mapaPeru", {
+
     zoomControl: true,
+
     scrollWheelZoom: true
+
   });
 
-  // OpenStreetMap
   L.tileLayer(
     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     {
+
       attribution:
-        '&copy; OpenStreetMap contributors',
+        "&copy; OpenStreetMap contributors",
+
       maxZoom: 19
+
     }
   ).addTo(mapaPeru);
 
+
   // Vista inicial de Perú
   mapaPeru.fitBounds([
+
     [-18.5, -81.5],
+
     [-0.5, -68.5]
+
   ]);
 
 }
@@ -196,13 +155,23 @@ async function cargarDatos() {
   const indicador =
     document.getElementById("indicadorConexion");
 
+
   try {
 
-    textoConexion.textContent =
-      "Conectando con Google Sheets...";
+    if (textoConexion) {
 
-    indicador.style.background =
-      "#ffb300";
+      textoConexion.textContent =
+        "Conectando con Google Sheets...";
+
+    }
+
+
+    if (indicador) {
+
+      indicador.style.background =
+        "#ffb300";
+
+    }
 
 
     const respuesta =
@@ -214,7 +183,8 @@ async function cargarDatos() {
     if (!respuesta.ok) {
 
       throw new Error(
-        "Error HTTP " + respuesta.status
+        "Error HTTP " +
+        respuesta.status
       );
 
     }
@@ -234,17 +204,34 @@ async function cargarDatos() {
       [...datosOriginales];
 
 
-    textoConexion.textContent =
-      "Google Sheets conectado";
+    if (textoConexion) {
 
-    indicador.style.background =
-      "#21c55d";
+      textoConexion.textContent =
+        "Google Sheets conectado";
+
+    }
 
 
-    document.getElementById(
-      "cantidadSalas"
-    ).textContent =
-      datosOriginales.length;
+    if (indicador) {
+
+      indicador.style.background =
+        "#21c55d";
+
+    }
+
+
+    const cantidad =
+      document.getElementById(
+        "cantidadSalas"
+      );
+
+
+    if (cantidad) {
+
+      cantidad.textContent =
+        datosOriginales.length;
+
+    }
 
 
     llenarFiltros();
@@ -260,32 +247,48 @@ async function cargarDatos() {
     );
 
 
-    textoConexion.textContent =
-      "Error de conexión";
+    if (textoConexion) {
+
+      textoConexion.textContent =
+        "Error de conexión";
+
+    }
 
 
-    indicador.style.background =
-      "#dc2626";
+    if (indicador) {
+
+      indicador.style.background =
+        "#dc2626";
+
+    }
 
 
-    document.getElementById(
-      "tablaCuerpo"
-    ).innerHTML = `
+    const tabla =
+      document.getElementById(
+        "tablaCuerpo"
+      );
 
-      <tr>
 
-        <td
-          colspan="11"
-          class="sin-datos">
+    if (tabla) {
 
-          ❌ No se pudieron cargar los datos
-          de Google Sheets.
+      tabla.innerHTML = `
 
-        </td>
+        <tr>
 
-      </tr>
+          <td
+            colspan="11"
+            class="sin-datos">
 
-    `;
+            ❌ No se pudieron cargar
+            los datos de Google Sheets.
+
+          </td>
+
+        </tr>
+
+      `;
+
+    }
 
   }
 
@@ -311,28 +314,44 @@ function configurarEventos() {
     document.getElementById("filtroRenovacion");
 
 
-  buscar.addEventListener(
-    "input",
-    aplicarFiltros
-  );
+  if (buscar) {
+
+    buscar.addEventListener(
+      "input",
+      aplicarFiltros
+    );
+
+  }
 
 
-  sector.addEventListener(
-    "change",
-    aplicarFiltros
-  );
+  if (sector) {
+
+    sector.addEventListener(
+      "change",
+      aplicarFiltros
+    );
+
+  }
 
 
-  mes.addEventListener(
-    "change",
-    aplicarFiltros
-  );
+  if (mes) {
+
+    mes.addEventListener(
+      "change",
+      aplicarFiltros
+    );
+
+  }
 
 
-  renovacion.addEventListener(
-    "change",
-    aplicarFiltros
-  );
+  if (renovacion) {
+
+    renovacion.addEventListener(
+      "change",
+      aplicarFiltros
+    );
+
+  }
 
 }
 
@@ -344,86 +363,131 @@ function configurarEventos() {
 function llenarFiltros() {
 
   const sectorSelect =
-    document.getElementById("filtroSector");
+    document.getElementById(
+      "filtroSector"
+    );
 
   const mesSelect =
-    document.getElementById("filtroMes");
+    document.getElementById(
+      "filtroMes"
+    );
+
+
+  if (!sectorSelect || !mesSelect) {
+
+    return;
+
+  }
 
 
   sectorSelect.innerHTML = `
+
     <option value="">
       Todos los sectores
     </option>
+
   `;
 
 
   mesSelect.innerHTML = `
+
     <option value="">
       Todos los meses
     </option>
+
   `;
 
 
   const sectores =
-    [...new Set(
+    [
+      ...new Set(
 
-      datosOriginales
+        datosOriginales
 
-        .map(d =>
-          String(
-            d["SECTOR"] || ""
-          ).trim()
-        )
+          .map(
+            d =>
+              String(
+                d["SECTOR"] || ""
+              ).trim()
+          )
 
-        .filter(Boolean)
+          .filter(Boolean)
 
-    )].sort();
+      )
+    ]
+      .sort();
 
 
-  sectores.forEach(function (sector) {
+  sectores.forEach(
+    function (sector) {
 
-    const option =
-      document.createElement("option");
+      const option =
+        document.createElement(
+          "option"
+        );
 
-    option.value = sector;
 
-    option.textContent = sector;
+      option.value =
+        sector;
 
-    sectorSelect.appendChild(option);
 
-  });
+      option.textContent =
+        sector;
+
+
+      sectorSelect.appendChild(
+        option
+      );
+
+    }
+  );
 
 
   const meses =
-    [...new Set(
+    [
+      ...new Set(
 
-      datosOriginales
+        datosOriginales
 
-        .map(d =>
-          String(
-            d[
-              "MES DE LA ULTIMA EMISIÓN RD"
-            ] || ""
-          ).trim()
-        )
+          .map(
+            d =>
+              String(
+                d[
+                  "MES DE LA ULTIMA EMISIÓN RD"
+                ] || ""
+              ).trim()
+          )
 
-        .filter(Boolean)
+          .filter(Boolean)
 
-    )].sort();
+      )
+    ]
+      .sort();
 
 
-  meses.forEach(function (mes) {
+  meses.forEach(
+    function (mes) {
 
-    const option =
-      document.createElement("option");
+      const option =
+        document.createElement(
+          "option"
+        );
 
-    option.value = mes;
 
-    option.textContent = mes;
+      option.value =
+        mes;
 
-    mesSelect.appendChild(option);
 
-  });
+      option.textContent =
+        mes;
+
+
+      mesSelect.appendChild(
+        option
+      );
+
+    }
+  );
 
 }
 
@@ -434,30 +498,54 @@ function llenarFiltros() {
 
 function aplicarFiltros() {
 
-  const texto =
+  const buscar =
     document.getElementById(
       "buscarSala"
-    ).value
-      .toLowerCase()
-      .trim();
+    );
+
+
+  const sectorSelect =
+    document.getElementById(
+      "filtroSector"
+    );
+
+
+  const mesSelect =
+    document.getElementById(
+      "filtroMes"
+    );
+
+
+  const renovacionSelect =
+    document.getElementById(
+      "filtroRenovacion"
+    );
+
+
+  const texto =
+    buscar
+      ? buscar.value
+          .toLowerCase()
+          .trim()
+      : "";
 
 
   const sector =
-    document.getElementById(
-      "filtroSector"
-    ).value;
+    sectorSelect
+      ? sectorSelect.value
+      : "";
 
 
   const mes =
-    document.getElementById(
-      "filtroMes"
-    ).value;
+    mesSelect
+      ? mesSelect.value
+      : "";
 
 
   const renovacion =
-    document.getElementById(
-      "filtroRenovacion"
-    ).value;
+    renovacionSelect
+      ? renovacionSelect.value
+      : "";
 
 
   datosFiltrados =
@@ -467,7 +555,8 @@ function aplicarFiltros() {
         const sala =
           String(
             registro["SALAS"] || ""
-          ).toLowerCase();
+          )
+            .toLowerCase();
 
 
         if (
@@ -513,7 +602,8 @@ function aplicarFiltros() {
 
 
           if (
-            estado.codigo !== renovacion
+            estado.codigo !==
+            renovacion
           ) {
 
             return false;
@@ -540,24 +630,56 @@ function aplicarFiltros() {
 
 function limpiarFiltros() {
 
-  document.getElementById(
-    "buscarSala"
-  ).value = "";
+  const buscar =
+    document.getElementById(
+      "buscarSala"
+    );
 
 
-  document.getElementById(
-    "filtroSector"
-  ).value = "";
+  const sector =
+    document.getElementById(
+      "filtroSector"
+    );
 
 
-  document.getElementById(
-    "filtroMes"
-  ).value = "";
+  const mes =
+    document.getElementById(
+      "filtroMes"
+    );
 
 
-  document.getElementById(
-    "filtroRenovacion"
-  ).value = "";
+  const renovacion =
+    document.getElementById(
+      "filtroRenovacion"
+    );
+
+
+  if (buscar) {
+
+    buscar.value = "";
+
+  }
+
+
+  if (sector) {
+
+    sector.value = "";
+
+  }
+
+
+  if (mes) {
+
+    mes.value = "";
+
+  }
+
+
+  if (renovacion) {
+
+    renovacion.value = "";
+
+  }
 
 
   datosFiltrados =
@@ -584,15 +706,23 @@ function actualizarDashboard() {
   actualizarMapa();
 
 
-  document.getElementById(
-    "contadorResultados"
-  ).textContent =
-    datosFiltrados.length +
-    (
-      datosFiltrados.length === 1
-        ? " registro"
-        : " registros"
+  const contador =
+    document.getElementById(
+      "contadorResultados"
     );
+
+
+  if (contador) {
+
+    contador.textContent =
+      datosFiltrados.length +
+      (
+        datosFiltrados.length === 1
+          ? " registro"
+          : " registros"
+      );
+
+  }
 
 }
 
@@ -642,40 +772,92 @@ function actualizarKPI() {
     );
 
 
-  document.getElementById(
-    "kpiSalas"
-  ).textContent =
-    formatearNumero(total);
+  const kpiSalas =
+    document.getElementById(
+      "kpiSalas"
+    );
 
 
-  document.getElementById(
-    "kpiEspacios"
-  ).textContent =
-    formatearNumero(espacios);
+  const kpiEspacios =
+    document.getElementById(
+      "kpiEspacios"
+    );
 
 
-  document.getElementById(
-    "kpiRD"
-  ).textContent =
-    formatearNumero(rd);
+  const kpiRD =
+    document.getElementById(
+      "kpiRD"
+    );
 
 
-  document.getElementById(
-    "kpiGenex"
-  ).textContent =
-    formatearNumero(genex);
+  const kpiGenex =
+    document.getElementById(
+      "kpiGenex"
+    );
 
 
-  document.getElementById(
-    "kpiDiferencia"
-  ).textContent =
-    formatearNumero(diferenciaIndeci);
+  const kpiDiferencia =
+    document.getElementById(
+      "kpiDiferencia"
+    );
 
 
-  document.getElementById(
-    "kpiDiferenciaGenex"
-  ).textContent =
-    formatearNumero(diferenciaGenex);
+  const kpiDiferenciaGenex =
+    document.getElementById(
+      "kpiDiferenciaGenex"
+    );
+
+
+  if (kpiSalas) {
+
+    kpiSalas.textContent =
+      formatearNumero(total);
+
+  }
+
+
+  if (kpiEspacios) {
+
+    kpiEspacios.textContent =
+      formatearNumero(espacios);
+
+  }
+
+
+  if (kpiRD) {
+
+    kpiRD.textContent =
+      formatearNumero(rd);
+
+  }
+
+
+  if (kpiGenex) {
+
+    kpiGenex.textContent =
+      formatearNumero(genex);
+
+  }
+
+
+  if (kpiDiferencia) {
+
+    kpiDiferencia.textContent =
+      formatearNumero(
+        diferenciaIndeci
+      );
+
+  }
+
+
+  if (kpiDiferenciaGenex) {
+
+    kpiDiferenciaGenex.textContent =
+      formatearNumero(
+        diferenciaGenex
+      );
+
+  }
 
 }
 
@@ -690,7 +872,10 @@ function sumarCampo(
 ) {
 
   return datos.reduce(
-    function (total, registro) {
+    function (
+      total,
+      registro
+    ) {
 
       const valor =
         Number(
@@ -722,6 +907,9 @@ function actualizarTabla() {
     document.getElementById(
       "tablaCuerpo"
     );
+
+
+  if (!cuerpo) return;
 
 
   cuerpo.innerHTML = "";
@@ -757,7 +945,9 @@ function actualizarTabla() {
     function (registro) {
 
       const fila =
-        document.createElement("tr");
+        document.createElement(
+          "tr"
+        );
 
 
       const renovacion =
@@ -776,7 +966,6 @@ function actualizarTabla() {
           )}
         </td>
 
-
         <td>
           <strong>
             ${escaparHTML(
@@ -784,7 +973,6 @@ function actualizarTabla() {
             )}
           </strong>
         </td>
-
 
         <td>
           ${formatearNumero(
@@ -794,13 +982,11 @@ function actualizarTabla() {
           )}
         </td>
 
-
         <td>
           ${formatearNumero(
             registro["RD MAQ."]
           )}
         </td>
-
 
         <td>
           ${mostrarDiferencia(
@@ -810,7 +996,6 @@ function actualizarTabla() {
           )}
         </td>
 
-
         <td>
           ${formatearNumero(
             registro[
@@ -818,7 +1003,6 @@ function actualizarTabla() {
             ]
           )}
         </td>
-
 
         <td>
           ${mostrarDiferencia(
@@ -828,13 +1012,11 @@ function actualizarTabla() {
           )}
         </td>
 
-
         <td>
           ${formatearNumero(
             registro["AFORO"]
           )}
         </td>
-
 
         <td>
           ${formatearFecha(
@@ -844,7 +1026,6 @@ function actualizarTabla() {
           )}
         </td>
 
-
         <td>
           ${escaparHTML(
             registro[
@@ -852,7 +1033,6 @@ function actualizarTabla() {
             ]
           )}
         </td>
-
 
         <td>
 
@@ -872,13 +1052,17 @@ function actualizarTabla() {
         "click",
         function () {
 
-          abrirModal(registro);
+          abrirModal(
+            registro
+          );
 
         }
       );
 
 
-      cuerpo.appendChild(fila);
+      cuerpo.appendChild(
+        fila
+      );
 
     }
   );
@@ -899,9 +1083,11 @@ function mostrarDiferencia(valor) {
   if (numero === 0) {
 
     return `
+
       <span class="diferencia-cero">
         0
       </span>
+
     `;
 
   }
@@ -910,18 +1096,22 @@ function mostrarDiferencia(valor) {
   if (numero > 0) {
 
     return `
+
       <span class="diferencia-positiva">
         +${formatearNumero(numero)}
       </span>
+
     `;
 
   }
 
 
   return `
+
     <span class="diferencia-negativa">
       ${formatearNumero(numero)}
     </span>
+
   `;
 
 }
@@ -931,7 +1121,9 @@ function mostrarDiferencia(valor) {
 // ESTADO RENOVACIÓN
 // ======================================================
 
-function obtenerEstadoRenovacion(fecha) {
+function obtenerEstadoRenovacion(
+  fecha
+) {
 
   if (!fecha) {
 
@@ -989,15 +1181,19 @@ function obtenerEstadoRenovacion(fecha) {
 
   const dias =
     Math.ceil(
+
       (
-        fechaRenovacion - hoy
-      ) /
+        fechaRenovacion -
+        hoy
+      )
+      /
       (
         1000 *
         60 *
         60 *
         24
       )
+
     );
 
 
@@ -1048,9 +1244,7 @@ function obtenerEstadoRenovacion(fecha) {
 
 
 // ======================================================
-// ======================================================
 // MAPA
-// ======================================================
 // ======================================================
 
 
@@ -1058,7 +1252,9 @@ function obtenerEstadoRenovacion(fecha) {
 // OBTENER UBICACIÓN POR NOMBRE DE SALA
 // ======================================================
 
-function obtenerUbicacionSala(nombre) {
+function obtenerUbicacionSala(
+  nombre
+) {
 
   if (!nombre) return null;
 
@@ -1069,12 +1265,13 @@ function obtenerUbicacionSala(nombre) {
       .trim();
 
 
-  // Normalizar espacios
   sala =
-    sala.replace(/\s+/g, " ");
+    sala.replace(
+      /\s+/g,
+      " "
+    );
 
 
-  // Eliminar textos de concesionario/restaurante
   sala =
     sala.replace(
       /\s*\(.*?\)\s*/g,
@@ -1083,21 +1280,24 @@ function obtenerUbicacionSala(nombre) {
     .trim();
 
 
-  // Buscar primero coincidencia exacta
+  // Coincidencia exacta
   if (
     UBICACIONES_SALAS[sala]
   ) {
 
     return {
+
       centro:
         UBICACIONES_SALAS[sala],
-      ciudad: sala
+
+      ciudad:
+        sala
+
     };
 
   }
 
 
-  // Buscar por prefijo
   const claves =
     Object.keys(
       UBICACIONES_SALAS
@@ -1157,15 +1357,16 @@ function calcularPosicionMarcador(
   ) {
 
     return [
+
       centro[0],
+
       centro[1]
+
     ];
 
   }
 
 
-  // Radio visual pequeño.
-  // Aproximadamente 500-800 metros.
   const radio =
     0.006;
 
@@ -1175,20 +1376,26 @@ function calcularPosicionMarcador(
       2 *
       Math.PI *
       indice
-    ) /
+    )
+    /
     total;
 
 
   const lat =
     centro[0] +
-    Math.cos(angulo) *
+    Math.cos(
+      angulo
+    ) *
     radio;
 
 
   const lng =
     centro[1] +
-    Math.sin(angulo) *
-    radio /
+    Math.sin(
+      angulo
+    ) *
+    radio
+    /
     Math.cos(
       centro[0] *
       Math.PI /
@@ -1197,8 +1404,11 @@ function calcularPosicionMarcador(
 
 
   return [
+
     lat,
+
     lng
+
   ];
 
 }
@@ -1259,18 +1469,27 @@ function crearIconoSala(
     `,
 
     iconSize: [
+
       18,
+
       18
+
     ],
 
     iconAnchor: [
+
       9,
+
       9
+
     ],
 
     popupAnchor: [
+
       0,
+
       -10
+
     ]
 
   });
@@ -1302,7 +1521,6 @@ function actualizarMapa() {
   marcadoresMapa = [];
 
 
-  // Agrupar por ciudad
   const grupos = {};
 
 
@@ -1352,8 +1570,9 @@ function actualizarMapa() {
   let cantidadMapa = 0;
 
 
-  // Crear marcadores
-  Object.keys(grupos).forEach(
+  Object.keys(
+    grupos
+  ).forEach(
     function (ciudad) {
 
       const grupo =
@@ -1361,7 +1580,10 @@ function actualizarMapa() {
 
 
       grupo.forEach(
-        function (item, indice) {
+        function (
+          item,
+          indice
+        ) {
 
           const registro =
             item.registro;
@@ -1373,9 +1595,13 @@ function actualizarMapa() {
 
           const posicion =
             calcularPosicionMarcador(
+
               centro,
+
               indice,
+
               grupo.length
+
             );
 
 
@@ -1389,13 +1615,18 @@ function actualizarMapa() {
 
           const marcador =
             L.marker(
+
               posicion,
+
               {
+
                 icon:
                   crearIconoSala(
                     estado
                   )
+
               }
+
             );
 
 
@@ -1494,6 +1725,7 @@ function actualizarMapa() {
 
 
               <p>
+
                 <strong>Estado:</strong>
 
                 <span
@@ -1512,10 +1744,15 @@ function actualizarMapa() {
 
 
               <p>
-                <strong>Renovación:</strong>
+
+                <strong>
+                  Renovación:
+                </strong>
+
                 ${escaparHTML(
                   renovacion
                 )}
+
               </p>
 
 
@@ -1529,34 +1766,54 @@ function actualizarMapa() {
 
 
               <p>
-                <strong>Espacios INDECI:</strong>
+
+                <strong>
+                  Espacios INDECI:
+                </strong>
+
                 ${formatearNumero(
                   espacios
                 )}
+
               </p>
 
 
               <p>
-                <strong>RD Máquinas:</strong>
+
+                <strong>
+                  RD Máquinas:
+                </strong>
+
                 ${formatearNumero(
                   rd
                 )}
+
               </p>
 
 
               <p>
-                <strong>GENEX:</strong>
+
+                <strong>
+                  GENEX:
+                </strong>
+
                 ${formatearNumero(
                   genex
                 )}
+
               </p>
 
 
               <p>
-                <strong>Aforo:</strong>
+
+                <strong>
+                  Aforo:
+                </strong>
+
                 ${formatearNumero(
                   aforo
                 )}
+
               </p>
 
             </div>
@@ -1573,7 +1830,6 @@ function actualizarMapa() {
             );
 
 
-          // Abrir modal con doble clic
           marcador.on(
             "dblclick",
             function () {
@@ -1600,7 +1856,6 @@ function actualizarMapa() {
   );
 
 
-  // Actualizar contador
   const contador =
     document.getElementById(
       "salasMapa"
@@ -1615,8 +1870,6 @@ function actualizarMapa() {
   }
 
 
-  // Si existen resultados,
-  // ajustar mapa a las salas
   if (
     marcadoresMapa.length > 0
   ) {
@@ -1628,14 +1881,23 @@ function actualizarMapa() {
 
 
     mapaPeru.fitBounds(
+
       grupo.getBounds(),
+
       {
+
         padding: [
+
           40,
+
           40
+
         ],
+
         maxZoom: 12
+
       }
+
     );
 
   }
@@ -1672,6 +1934,9 @@ function crearGraficoIndeciRD() {
     );
 
 
+  if (!ctx) return;
+
+
   if (graficoIndeciRD) {
 
     graficoIndeciRD.destroy();
@@ -1703,15 +1968,21 @@ function crearGraficoIndeciRD() {
         data: {
 
           labels: [
+
             "INDECI",
+
             "RD MAQ."
+
           ],
 
           datasets: [{
 
             data: [
+
               totalIndeci,
+
               totalRD
+
             ],
 
             borderWidth: 1
@@ -1729,7 +2000,9 @@ function crearGraficoIndeciRD() {
           plugins: {
 
             legend: {
+
               display: false
+
             }
 
           },
@@ -1737,7 +2010,9 @@ function crearGraficoIndeciRD() {
           scales: {
 
             y: {
+
               beginAtZero: true
+
             }
 
           }
@@ -1760,6 +2035,9 @@ function crearGraficoRDGenex() {
     document.getElementById(
       "graficoRDGenex"
     );
+
+
+  if (!ctx) return;
 
 
   if (graficoRDGenex) {
@@ -1793,15 +2071,21 @@ function crearGraficoRDGenex() {
         data: {
 
           labels: [
+
             "RD MAQ.",
+
             "GENEX"
+
           ],
 
           datasets: [{
 
             data: [
+
               rd,
+
               genex
+
             ],
 
             borderWidth: 1
@@ -1819,7 +2103,9 @@ function crearGraficoRDGenex() {
           plugins: {
 
             legend: {
+
               display: false
+
             }
 
           },
@@ -1827,7 +2113,9 @@ function crearGraficoRDGenex() {
           scales: {
 
             y: {
+
               beginAtZero: true
+
             }
 
           }
@@ -1850,6 +2138,9 @@ function crearGraficoSectores() {
     document.getElementById(
       "graficoSectores"
     );
+
+
+  if (!ctx) return;
 
 
   if (graficoSectores) {
@@ -1887,8 +2178,11 @@ function crearGraficoSectores() {
       sectores
     )
       .sort(
-        (a, b) =>
-          b[1] - a[1]
+        function (a, b) {
+
+          return b[1] - a[1];
+
+        }
       );
 
 
@@ -1903,7 +2197,11 @@ function crearGraficoSectores() {
 
           labels:
             ordenados.map(
-              item => item[0]
+              function (item) {
+
+                return item[0];
+
+              }
             ),
 
           datasets: [{
@@ -1912,7 +2210,11 @@ function crearGraficoSectores() {
 
             data:
               ordenados.map(
-                item => item[1]
+                function (item) {
+
+                  return item[1];
+
+                }
               ),
 
             borderWidth: 1
@@ -1932,7 +2234,9 @@ function crearGraficoSectores() {
           plugins: {
 
             legend: {
+
               display: false
+
             }
 
           },
@@ -1940,7 +2244,9 @@ function crearGraficoSectores() {
           scales: {
 
             x: {
+
               beginAtZero: true
+
             }
 
           }
@@ -1963,6 +2269,9 @@ function crearGraficoRenovaciones() {
     document.getElementById(
       "graficoRenovaciones"
     );
+
+
+  if (!ctx) return;
 
 
   if (graficoRenovaciones) {
@@ -2028,17 +2337,25 @@ function crearGraficoRenovaciones() {
         data: {
 
           labels: [
+
             "Vigentes",
+
             "Próximas",
+
             "Vencidas"
+
           ],
 
           datasets: [{
 
             data: [
+
               vigentes,
+
               proximas,
+
               vencidas
+
             ],
 
             borderWidth: 1
@@ -2057,7 +2374,8 @@ function crearGraficoRenovaciones() {
 
             legend: {
 
-              position: "bottom"
+              position:
+                "bottom"
 
             }
 
@@ -2075,7 +2393,9 @@ function crearGraficoRenovaciones() {
 // MODAL
 // ======================================================
 
-function abrirModal(registro) {
+function abrirModal(
+  registro
+) {
 
   const modal =
     document.getElementById(
@@ -2095,6 +2415,17 @@ function abrirModal(registro) {
     );
 
 
+  if (
+    !modal ||
+    !titulo ||
+    !contenido
+  ) {
+
+    return;
+
+  }
+
+
   titulo.textContent =
     registro["SALAS"] ||
     "Detalle de sala";
@@ -2105,9 +2436,15 @@ function abrirModal(registro) {
 
   const campos = [
 
-    ["SECTOR", "Sector"],
+    [
+      "SECTOR",
+      "Sector"
+    ],
 
-    ["SALAS", "Sala"],
+    [
+      "SALAS",
+      "Sala"
+    ],
 
     [
       "RENOVACIÓN PARA INDECI",
@@ -2166,7 +2503,9 @@ function abrirModal(registro) {
     function (campo) {
 
       const valor =
-        registro[campo[0]];
+        registro[
+          campo[0]
+        ];
 
 
       const item =
@@ -2246,13 +2585,18 @@ function abrirModal(registro) {
 
 function cerrarModal() {
 
-  document
-    .getElementById(
+  const modal =
+    document.getElementById(
       "modalDetalle"
-    )
-    .classList.remove(
-      "activo"
     );
+
+
+  if (!modal) return;
+
+
+  modal.classList.remove(
+    "activo"
+  );
 
 }
 
@@ -2268,6 +2612,7 @@ document.addEventListener(
 
 
     if (
+      modal &&
       event.target === modal
     ) {
 
@@ -2283,10 +2628,14 @@ document.addEventListener(
 // FORMATEAR FECHA
 // ======================================================
 
-function formatearFecha(valor) {
+function formatearFecha(
+  valor
+) {
 
   const fecha =
-    convertirFecha(valor);
+    convertirFecha(
+      valor
+    );
 
 
   if (!fecha) {
@@ -2316,7 +2665,9 @@ function formatearFecha(valor) {
 // CONVERTIR FECHA
 // ======================================================
 
-function convertirFecha(valor) {
+function convertirFecha(
+  valor
+) {
 
   if (!valor) {
 
@@ -2325,7 +2676,6 @@ function convertirFecha(valor) {
   }
 
 
-  // Si ya es Date
   if (
     valor instanceof Date
   ) {
@@ -2344,10 +2694,17 @@ function convertirFecha(valor) {
       .trim();
 
 
-  if (!texto) return null;
+  if (!texto) {
+
+    return null;
+
+  }
 
 
-  // Formato DD/MM/YYYY
+  // ====================================================
+  // DD/MM/YYYY
+  // ====================================================
+
   let coincidencia =
     texto.match(
       /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/
@@ -2361,10 +2718,12 @@ function convertirFecha(valor) {
         coincidencia[1]
       );
 
+
     const mes =
       Number(
         coincidencia[2]
       ) - 1;
+
 
     const año =
       Number(
@@ -2389,7 +2748,10 @@ function convertirFecha(valor) {
   }
 
 
-  // Formato YYYY-MM-DD
+  // ====================================================
+  // YYYY-MM-DD
+  // ====================================================
+
   coincidencia =
     texto.match(
       /^(\d{4})-(\d{1,2})-(\d{1,2})/
@@ -2403,10 +2765,12 @@ function convertirFecha(valor) {
         coincidencia[1]
       );
 
+
     const mes =
       Number(
         coincidencia[2]
       ) - 1;
+
 
     const dia =
       Number(
@@ -2431,9 +2795,14 @@ function convertirFecha(valor) {
   }
 
 
-  // Fecha normal de Google
+  // ====================================================
+  // FECHA NORMAL DE GOOGLE
+  // ====================================================
+
   const fecha =
-    new Date(texto);
+    new Date(
+      texto
+    );
 
 
   if (
@@ -2456,7 +2825,9 @@ function convertirFecha(valor) {
 // FORMATO NÚMERO
 // ======================================================
 
-function formatearNumero(valor) {
+function formatearNumero(
+  valor
+) {
 
   const numero =
     Number(valor) || 0;
@@ -2473,7 +2844,9 @@ function formatearNumero(valor) {
 // ESCAPAR HTML
 // ======================================================
 
-function escaparHTML(valor) {
+function escaparHTML(
+  valor
+) {
 
   if (
     valor === null ||
@@ -2517,6 +2890,8 @@ function escaparHTML(valor) {
 
 // ======================================================
 // ACTUALIZACIÓN AUTOMÁTICA
+// ======================================================
+// Cada 5 minutos vuelve a consultar Google Sheets.
 // ======================================================
 
 setInterval(
