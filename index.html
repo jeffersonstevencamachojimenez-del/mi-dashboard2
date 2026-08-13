@@ -9,8 +9,15 @@
 
   <link rel="stylesheet" href="style.css">
 
-  <!-- Gráficos -->
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Leaflet - Mapa -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
+
 </head>
 
 <body>
@@ -401,6 +408,54 @@
 
 
     <!-- ============================= -->
+    <!-- MAPA DEL PERÚ -->
+    <!-- ============================= -->
+
+    <section class="mapa-panel">
+
+      <div class="mapa-header">
+
+        <div>
+
+          <h2>
+            Distribución geográfica
+          </h2>
+
+          <p>
+            Salas RDVSINDECI en el territorio nacional
+          </p>
+
+        </div>
+
+
+        <div class="mapa-resumen">
+
+          <span>
+            <strong id="salasMapa">
+              0
+            </strong>
+
+            salas
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <div id="mapaPeru">
+
+        <div class="mapa-cargando">
+          Cargando mapa...
+        </div>
+
+      </div>
+
+
+    </section>
+
+
+    <!-- ============================= -->
     <!-- TABLA -->
     <!-- ============================= -->
 
@@ -541,7 +596,16 @@
 
 
   <!-- ============================= -->
-  <!-- JAVASCRIPT -->
+  <!-- LEAFLET - MAPA -->
+  <!-- ============================= -->
+
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+  </script>
+
+
+  <!-- ============================= -->
+  <!-- JAVASCRIPT DEL DASHBOARD -->
   <!-- ============================= -->
 
   <script src="script.js"></script>
