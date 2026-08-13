@@ -1,71 +1,500 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Dashboard</title>
+  <title>Dashboard RDVSINDECI</title>
 
   <link rel="stylesheet" href="style.css">
+
+  <!-- Gráficos -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
 
+  <!-- ============================= -->
+  <!-- ENCABEZADO -->
+  <!-- ============================= -->
+
   <header class="encabezado">
-    <h1>Dashboard de Operaciones</h1>
-    <p>Panel de información</p>
+
+    <div>
+      <h1>Dashboard RDVSINDECI</h1>
+
+      <p>
+        Control de renovaciones, RD, máquinas GENEX y aforo
+      </p>
+    </div>
+
+    <div class="conexion">
+
+      <span id="indicadorConexion" class="punto"></span>
+
+      <span id="textoConexion">
+        Conectando con Google Sheets...
+      </span>
+
+    </div>
+
   </header>
+
+
+  <!-- ============================= -->
+  <!-- CONTENEDOR PRINCIPAL -->
+  <!-- ============================= -->
 
   <main class="contenedor">
 
-    <section class="tarjetas">
 
-      <div class="tarjeta">
-        <span class="titulo">Total de registros</span>
-        <strong id="totalRegistros">0</strong>
+    <!-- ============================= -->
+    <!-- BARRA DE ACCIONES -->
+    <!-- ============================= -->
+
+    <section class="barra-acciones">
+
+      <div>
+
+        <strong id="cantidadSalas">
+          0
+        </strong>
+
+        <span>
+          salas registradas
+        </span>
+
       </div>
 
-      <div class="tarjeta">
-        <span class="titulo">Pendientes</span>
-        <strong id="pendientes">0</strong>
-      </div>
 
-      <div class="tarjeta">
-        <span class="titulo">Completados</span>
-        <strong id="completados">0</strong>
+      <div class="acciones">
+
+        <button
+          id="btnActualizar"
+          onclick="cargarDatos()">
+
+          ↻ Actualizar
+
+        </button>
+
       </div>
 
     </section>
 
+
+    <!-- ============================= -->
+    <!-- TARJETAS KPI -->
+    <!-- ============================= -->
+
+    <section class="tarjetas">
+
+
+      <div class="tarjeta">
+
+        <span class="icono">
+          🏢
+        </span>
+
+        <div>
+
+          <span class="titulo">
+            SALAS
+          </span>
+
+          <strong id="kpiSalas">
+            0
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <div class="tarjeta">
+
+        <span class="icono">
+          📐
+        </span>
+
+        <div>
+
+          <span class="titulo">
+            ESPACIOS INDECI
+          </span>
+
+          <strong id="kpiEspacios">
+            0
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <div class="tarjeta">
+
+        <span class="icono">
+          🎰
+        </span>
+
+        <div>
+
+          <span class="titulo">
+            RD MÁQUINAS
+          </span>
+
+          <strong id="kpiRD">
+            0
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <div class="tarjeta">
+
+        <span class="icono">
+          ⚙️
+        </span>
+
+        <div>
+
+          <span class="titulo">
+            MÁQUINAS GENEX
+          </span>
+
+          <strong id="kpiGenex">
+            0
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <div class="tarjeta">
+
+        <span class="icono">
+          ⚠️
+        </span>
+
+        <div>
+
+          <span class="titulo">
+            DIF. INDECI VS RD
+          </span>
+
+          <strong id="kpiDiferencia">
+            0
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <div class="tarjeta">
+
+        <span class="icono">
+          🔄
+        </span>
+
+        <div>
+
+          <span class="titulo">
+            DIF. RD VS GENEX
+          </span>
+
+          <strong id="kpiDiferenciaGenex">
+            0
+          </strong>
+
+        </div>
+
+      </div>
+
+
+    </section>
+
+
+    <!-- ============================= -->
+    <!-- FILTROS -->
+    <!-- ============================= -->
+
+    <section class="filtros">
+
+      <div class="filtro">
+
+        <label>
+          Buscar sala
+        </label>
+
+        <input
+          type="text"
+          id="buscarSala"
+          placeholder="Escribe una sala..."
+        >
+
+      </div>
+
+
+      <div class="filtro">
+
+        <label>
+          Sector
+        </label>
+
+        <select id="filtroSector">
+
+          <option value="">
+            Todos los sectores
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="filtro">
+
+        <label>
+          Mes última emisión RD
+        </label>
+
+        <select id="filtroMes">
+
+          <option value="">
+            Todos los meses
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="filtro">
+
+        <label>
+          Renovación
+        </label>
+
+        <select id="filtroRenovacion">
+
+          <option value="">
+            Todas
+          </option>
+
+          <option value="VENCIDA">
+            Vencidas
+          </option>
+
+          <option value="PROXIMA">
+            Próximas
+          </option>
+
+          <option value="VIGENTE">
+            Vigentes
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <button
+        class="btn-limpiar"
+        onclick="limpiarFiltros()">
+
+        Limpiar filtros
+
+      </button>
+
+    </section>
+
+
+    <!-- ============================= -->
+    <!-- GRÁFICOS -->
+    <!-- ============================= -->
+
+    <section class="graficos">
+
+
+      <div class="grafico">
+
+        <div class="grafico-header">
+
+          <h2>
+            INDECI vs RD
+          </h2>
+
+        </div>
+
+        <div class="grafico-contenido">
+
+          <canvas id="graficoIndeciRD"></canvas>
+
+        </div>
+
+      </div>
+
+
+      <div class="grafico">
+
+        <div class="grafico-header">
+
+          <h2>
+            RD vs GENEX
+          </h2>
+
+        </div>
+
+        <div class="grafico-contenido">
+
+          <canvas id="graficoRDGenex"></canvas>
+
+        </div>
+
+      </div>
+
+
+      <div class="grafico grafico-grande">
+
+        <div class="grafico-header">
+
+          <h2>
+            Salas por sector
+          </h2>
+
+        </div>
+
+        <div class="grafico-contenido">
+
+          <canvas id="graficoSectores"></canvas>
+
+        </div>
+
+      </div>
+
+
+      <div class="grafico grafico-grande">
+
+        <div class="grafico-header">
+
+          <h2>
+            Renovaciones
+          </h2>
+
+        </div>
+
+        <div class="grafico-contenido">
+
+          <canvas id="graficoRenovaciones"></canvas>
+
+        </div>
+
+      </div>
+
+
+    </section>
+
+
+    <!-- ============================= -->
+    <!-- TABLA -->
+    <!-- ============================= -->
+
     <section class="panel">
 
-      <div class="panel-header">
-        <h2>Registros</h2>
 
-        <button id="btnActualizar" onclick="cargarDatos()">
-          Actualizar
-        </button>
+      <div class="panel-header">
+
+        <div>
+
+          <h2>
+            Detalle de salas
+          </h2>
+
+          <span id="contadorResultados">
+            0 registros
+          </span>
+
+        </div>
+
       </div>
+
 
       <div class="tabla-contenedor">
 
-        <table id="tablaDatos">
+        <table>
 
           <thead>
+
             <tr>
-              <th>Sala</th>
-              <th>Estado</th>
-              <th>Fecha</th>
-              <th>Observación</th>
+
+              <th>
+                SECTOR
+              </th>
+
+              <th>
+                SALA
+              </th>
+
+              <th>
+                ESPACIOS INDECI
+              </th>
+
+              <th>
+                RD MAQ.
+              </th>
+
+              <th>
+                INDECI VS RD
+              </th>
+
+              <th>
+                GENEX
+              </th>
+
+              <th>
+                RD VS GENEX
+              </th>
+
+              <th>
+                AFORO
+              </th>
+
+              <th>
+                RENOVACIÓN
+              </th>
+
+              <th>
+                ÚLTIMA EMISIÓN RD
+              </th>
+
+              <th>
+                ESTADO
+              </th>
+
             </tr>
+
           </thead>
 
+
           <tbody id="tablaCuerpo">
+
             <tr>
-              <td colspan="4" class="sin-datos">
+
+              <td
+                colspan="11"
+                class="sin-datos">
+
                 Cargando datos...
+
               </td>
+
             </tr>
+
           </tbody>
 
         </table>
@@ -74,9 +503,49 @@
 
     </section>
 
+
   </main>
+
+
+  <!-- ============================= -->
+  <!-- MODAL DETALLE -->
+  <!-- ============================= -->
+
+  <div
+    id="modalDetalle"
+    class="modal">
+
+    <div class="modal-contenido">
+
+      <button
+        class="cerrar-modal"
+        onclick="cerrarModal()">
+
+        ×
+
+      </button>
+
+      <h2 id="modalTitulo">
+        Detalle de sala
+      </h2>
+
+      <div
+        id="modalDatos"
+        class="modal-datos">
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ============================= -->
+  <!-- JAVASCRIPT -->
+  <!-- ============================= -->
 
   <script src="script.js"></script>
 
 </body>
+
 </html>
